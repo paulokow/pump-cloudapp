@@ -1,0 +1,71 @@
+<html>
+    <head>
+        <!-- Latest compiled and minified CSS --><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+        <!-- jQuery library --><script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <!-- Latest compiled JavaScript --><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>  
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        {% if measures %}
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+         var data = new google.visualization.DataTable();
+         data.addColumn('datetime', 'Date & Time');
+         data.addColumn('number', 'BG Value');
+         data.addColumn('number', 'BG Low');
+         data.addColumn('number', 'BG High'); 
+        {% for m in measures %}
+         data.addRow([new Date("{{ m.timestamp.isoformat }}"), {{ m.value }}, 70, 140]);
+         {% endfor %}
+        var options = {
+          title: 'BG Values',
+          curveType: 'function',
+          height: 450,
+          series: {
+            0: { pointSize: 5 }
+          },
+          legend: { position: 'right' },
+          hAxis: {
+            format: "d/M H:mm",
+            slantedText:true, 
+            slantedTextAngle:90
+          },
+          vAxis: {
+              ticks: [0, 50, 70, 100, 140, 200, 250, 300, 350, 400]
+          }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+        chart.draw(data, options);
+      }
+    </script>
+       {% endif %}
+    </head>
+    <body>
+       <section id="main">
+        <div class="container">
+         <div class="col-md-6">
+        {% if measures %}
+          <table class="table table-striped table-hover">
+              <tr>
+                <th>Time</th>
+                <th>Value</th>
+              </tr>
+            {% for m in measures %}
+              <tr>
+                <td>{{m.timestamp}}</td>
+                <td>{{m.value}}</td>
+              </tr>
+            {% endfor %}
+          </table>
+        {% else %}
+            No data
+        {% endif %}
+         </div>
+         <div id="curve_chart" class="col-md-6"></div>
+        </div>
+       </section>
+    </body>
+</html>
