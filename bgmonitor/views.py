@@ -1,7 +1,7 @@
 # Create your views here.
 
 from django.template import loader, Context
-from .models import BGMeasure
+from .models import BGMeasure, Boluses
 from datetime import datetime, timedelta
 from pandas.core.frame import DataFrame
 import numpy as np
@@ -14,10 +14,12 @@ def index(request):
   #msr = BGMeasure.objects.order_by('-timestamp')[:10]
   dt_start = datetime.today().date() - timedelta(days=1)
   msr = BGMeasure.objects.filter(timestamp__gt = dt_start).order_by('-timestamp')
+  bol = Boluses.objects.filter(timestamp__gt = dt_start).order_by('-timestamp')
   template = loader.get_template('xxx/index.html')
   ctx = Context(
       {
           'measures': msr,
+          'boluses': bol,
       })
   return HttpResponse(template.render(context=ctx))
 

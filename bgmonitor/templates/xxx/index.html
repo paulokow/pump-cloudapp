@@ -10,20 +10,35 @@
       google.charts.setOnLoadCallback(drawChart);
 
       function drawChart() {
-         var data = new google.visualization.DataTable();
-         data.addColumn('datetime', 'Date & Time');
-         data.addColumn('number', 'BG Value');
-         data.addColumn('number', 'BG Low');
-         data.addColumn('number', 'BG High'); 
-        {% for m in measures %}
-         data.addRow([new Date("{{ m.timestamp.isoformat }}"), {{ m.value }}, 70, 140]);
+         var data1 = new google.visualization.DataTable();
+         data1.addColumn('datetime', 'Date & Time');
+         data1.addColumn('number', 'BG Value');
+         data1.addColumn('number', 'BG Low');
+         data1.addColumn('number', 'BG High'); 
+         {% for m in measures %}
+           data1.addRow([new Date("{{ m.timestamp.isoformat }}"), {{ m.value }}, 70, 140]);
          {% endfor %}
-        var options = {
+         var data2 = new google.visualization.DataTable();
+         data2.addColumn('datetime', 'Date & Time');
+         data2.addColumn('number', 'Bolus');
+         {% for m in boluses %}
+           data2.addRow([new Date("{{ m.timestamp.isoformat }}"), {{ m.delivered }}]);
+         {% endfor %}
+         
+         var data = google.visualization.data.join(data1, data2, 'full', [[0, 0]], [1,2,3], [1]);
+         var options = {
           title: 'BG Values',
           curveType: 'function',
+          interpolateNulls: true,
           height: 450,
+          bar: {
+            groupWidth: "30%",
+          },
           series: {
-            0: { pointSize: 5 }
+            0: { pointSize: 5, targetAxisIndex: 0 },
+            1: { targetAxisIndex: 0 },
+            2: { targetAxisIndex: 0 },
+            3: { targetAxisIndex: 1, interpolateNulls: false, type: 'bars' },
           },
           legend: { position: 'right' },
           hAxis: {
@@ -31,8 +46,13 @@
             slantedText:true, 
             slantedTextAngle:90
           },
-          vAxis: {
+          vAxes: {
+            0: {
               ticks: [0, 50, 70, 100, 140, 200, 250, 300, 350, 400]
+            },
+            1: {
+              gridlines: {color: 'transparent'},
+            }
           }
         };
 

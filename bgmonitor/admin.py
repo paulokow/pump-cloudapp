@@ -5,5 +5,7 @@ from django.contrib import admin
 
 # Register your models here.
 from .models import BGMeasure
+from .models import Boluses
 
 admin.site.register(BGMeasure)
+admin.site.register(Boluses)
