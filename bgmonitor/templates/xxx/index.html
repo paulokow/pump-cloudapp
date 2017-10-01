@@ -10,22 +10,31 @@
       google.charts.setOnLoadCallback(drawChart);
 
       function drawChart() {
-         var data1 = new google.visualization.DataTable();
-         data1.addColumn('datetime', 'Date & Time');
-         data1.addColumn('number', 'BG Value');
-         data1.addColumn('number', 'BG Low');
-         data1.addColumn('number', 'BG High'); 
+         var databg = new google.visualization.DataTable();
+         databg.addColumn('datetime', 'Date & Time');
+         databg.addColumn('number', 'BG Value');
+         databg.addColumn('number', 'BG Low');
+         databg.addColumn('number', 'BG High'); 
          {% for m in measures %}
-           data1.addRow([new Date("{{ m.timestamp.isoformat }}"), {{ m.value }}, 70, 140]);
+           databg.addRow([new Date("{{ m.timestamp.isoformat }}"), {{ m.value }}, 70, 140]);
          {% endfor %}
-         var data2 = new google.visualization.DataTable();
-         data2.addColumn('datetime', 'Date & Time');
-         data2.addColumn('number', 'Bolus');
+         var databolus = new google.visualization.DataTable();
+         databolus.addColumn('datetime', 'Date & Time');
+         databolus.addColumn('number', 'Bolus');
          {% for m in boluses %}
-           data2.addRow([new Date("{{ m.timestamp.isoformat }}"), {{ m.delivered }}]);
+           databolus.addRow([new Date("{{ m.timestamp.isoformat }}"), {{ m.delivered }}]);
          {% endfor %}
          
-         var data = google.visualization.data.join(data1, data2, 'full', [[0, 0]], [1,2,3], [1]);
+         var datawiz = new google.visualization.DataTable();
+         databolus.addColumn('datetime', 'Date & Time');
+         databolus.addColumn('number', 'Meal (KE)');
+         {% for m in wizardvalues %}
+           databolus.addRow([new Date("{{ m.timestamp.isoformat }}"), {{ m.carbInput }}]);
+         {% endfor %}
+         
+         
+         var data = google.visualization.data.join(databg, databolus, 'full', [[0, 0]], [1,2,3], [1]);
+         var data = google.visualization.data.join(data, datawiz, 'full', [[0, 0]], [1,2,3,4], [1]);
          var options = {
           title: 'BG Values',
           curveType: 'function',
@@ -39,6 +48,7 @@
             1: { targetAxisIndex: 0 },
             2: { targetAxisIndex: 0 },
             3: { targetAxisIndex: 1, interpolateNulls: false, type: 'bars' },
+            4: { targetAxisIndex: 1, interpolateNulls: false, type: 'bars' },            
           },
           legend: { position: 'right' },
           hAxis: {

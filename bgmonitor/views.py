@@ -12,14 +12,21 @@ from django.http import HttpResponse
 
 def index(request):
   #msr = BGMeasure.objects.order_by('-timestamp')[:10]
-  dt_start = datetime.today().date() - timedelta(days=1)
+  dt_end = datetime.now()
+  dt_start = dt_end - timedelta(days=2)
   msr = AllEvents.objects.filter(type = "BloodGlucoseReadingEvent", timestamp__gt = dt_start).order_by('-timestamp')
   bol = AllEvents.objects.filter(type = "NormalBolusDeliveredEvent", timestamp__gt = dt_start).order_by('-timestamp')
+  wiz = AllEvents.objects.filter(type = "BolusWizardEstimateEvent", timestamp__gt = dt_start).order_by('-timestamp')
+  baz = AllEvents.objects.filter(type = "BasalSegmentStartEvent", timestamp__gt = dt_start).order_by('-timestamp')
   template = loader.get_template('xxx/index.html')
   ctx = Context(
       {
+          'mintime': dt_start,
+          'maxtime': dt_end,
           'measures': msr,
           'boluses': bol,
+          'wizardvalues': wiz,
+          'bazal': baz,
       })
   return HttpResponse(template.render(context=ctx))
 
