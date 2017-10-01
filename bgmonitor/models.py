@@ -14,6 +14,13 @@ class AllEvents (models.Model):
     timestamp = models.DateTimeField()
     hour = models.IntegerField()
 
+    #BGMeasure 
+    value = models.IntegerField()
+
+    #Boluses
+    delivered = models.FloatField()
+    programmed = models.FloatField()
+
     def __init__(self, *args, **kwargs):
         super(AllEvents, self).__init__(*args, **kwargs)
         if self.type == "BloodGlucoseReadingEvent":
@@ -24,20 +31,7 @@ class AllEvents (models.Model):
 class BGMeasure (AllEvents):
     class Meta:
         proxy = True
-    
-    value = models.IntegerField()
-    
-    @classmethod
-    def _check_model(cls):
-        return []
 
 class Boluses (AllEvents):
     class Meta:
         proxy = True
-        
-    delivered = models.FloatField()
-    programmed = models.FloatField()
-
-    @classmethod
-    def _check_model(cls):
-        return []
