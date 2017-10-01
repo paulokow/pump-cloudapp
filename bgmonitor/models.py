@@ -8,25 +8,25 @@ from _weakref import proxy
 
 class AllEvents (models.Model):
     class Meta:
-        db_table = 'all_values'
+        db_table = 'all_events'
             
     type = models.TextField()
     timestamp = models.DateTimeField()
     hour = models.IntegerField()
 
     #BGMeasure 
-    value = models.IntegerField()
+    value = models.IntegerField(null=True)
 
     #Boluses
-    delivered = models.FloatField()
-    programmed = models.FloatField()
+    delivered = models.FloatField(null=True)
+    programmed = models.FloatField(null=True)
 
     def __init__(self, *args, **kwargs):
         super(AllEvents, self).__init__(*args, **kwargs)
         if self.type == "BloodGlucoseReadingEvent":
-            self.__class__ = "BGMeasure"
+            self.__class__ = BGMeasure
         elif self.type == "NormalBolusDeliveredEvent":
-            self.__class__ = "Boluses"            
+            self.__class__ = Boluses            
           
 class BGMeasure (AllEvents):
     class Meta:
