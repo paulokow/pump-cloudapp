@@ -21,15 +21,9 @@ class AllEvents (models.Model):
         elif self.type == "NormalBolusDeliveredEvent":
             self.__class__ = "Boluses"            
           
-class BGMeasure (AllEvents):
-    class Meta:
-        proxy = True
-    
+class BGMeasure (AllEvents):    
     value = models.IntegerField()
 
-class Boluses (AllEvents):
-    class Meta:
-        proxy = True
-        
+class Boluses (AllEvents):        
     delivered = models.FloatField()
     programmed = models.FloatField()
