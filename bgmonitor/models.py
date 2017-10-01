@@ -22,13 +22,13 @@ class AllEvents (models.Model):
             self.__class__ = "Boluses"            
           
 class BGMeasure (AllEvents):
-    class Meta(AllEvents.Meta):
+    class Meta:
         proxy = True
     
     value = models.IntegerField()
 
 class Boluses (AllEvents):
-    class Meta(AllEvents.Meta):
+    class Meta:
         proxy = True
         
     delivered = models.FloatField()
