@@ -13,8 +13,8 @@ from django.http import HttpResponse
 def index(request):
   #msr = BGMeasure.objects.order_by('-timestamp')[:10]
   dt_start = datetime.today().date() - timedelta(days=1)
-  msr = BGMeasure.objects.filter(timestamp__gt = dt_start).order_by('-timestamp')
-  bol = Boluses.objects.filter(timestamp__gt = dt_start).order_by('-timestamp')
+  msr = BGMeasure.objects.filter(type = "BloodGlucoseReadingEvent", timestamp__gt = dt_start).order_by('-timestamp')
+  bol = Boluses.objects.filter(type = "NormalBolusDeliveredEvent", timestamp__gt = dt_start).order_by('-timestamp')
   template = loader.get_template('xxx/index.html')
   ctx = Context(
       {
