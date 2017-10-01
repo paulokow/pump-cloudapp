@@ -26,6 +26,10 @@ class BGMeasure (AllEvents):
         proxy = True
     
     value = models.IntegerField()
+    
+    @classmethod
+    def _check_model(cls):
+        return []
 
 class Boluses (AllEvents):
     class Meta:
@@ -33,3 +37,7 @@ class Boluses (AllEvents):
         
     delivered = models.FloatField()
     programmed = models.FloatField()
+
+    @classmethod
+    def _check_model(cls):
+        return []
