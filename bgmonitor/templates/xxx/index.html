@@ -26,10 +26,10 @@
          {% endfor %}
          
          var datawiz = new google.visualization.DataTable();
-         databolus.addColumn('datetime', 'Date & Time');
-         databolus.addColumn('number', 'Meal (KE)');
+         datawiz.addColumn('datetime', 'Date & Time');
+         datawiz.addColumn('number', 'Meal (KE)');
          {% for m in wizardvalues %}
-           databolus.addRow([new Date("{{ m.timestamp.isoformat }}"), {{ m.carbInput }}]);
+           datawiz.addRow([new Date("{{ m.timestamp.isoformat }}"), {{ m.carbInput }}]);
          {% endfor %}
          
          
