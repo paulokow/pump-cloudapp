@@ -12,10 +12,10 @@ from django.http import HttpResponse
 
 
 def main(request):
-    return index(request, "'bgmonitor/actual.html'")
+    return index(request, "bgmonitor/actual.html")
 
 def main_details(request):
-    return index(request, "'bgmonitor/actual_details.html'")
+    return index(request, "bgmonitor/actual_details.html")
           
 def index(request, template_file):
   #msr = BGMeasure.objects.order_by('-timestamp')[:10]
