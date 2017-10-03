@@ -1,10 +1,11 @@
 # Create your views here.
 
-from django.template import loader, Context
+from django.template import loader, Context, RequestContext
 from .models import AllEvents, BGMeasure, Boluses
 from datetime import datetime, timedelta
 from pandas.core.frame import DataFrame
 import numpy as np
+from django.shortcuts import render_to_response
 
 # Create your views here.
 
@@ -25,7 +26,6 @@ def index(request, template_file):
   bol = AllEvents.objects.filter(type = "NormalBolusDeliveredEvent", timestamp__gt = dt_start).order_by('-timestamp')
   wiz = AllEvents.objects.filter(type = "BolusWizardEstimateEvent", timestamp__gt = dt_start).order_by('-timestamp')
   baz = AllEvents.objects.filter(type = "BasalSegmentStartEvent", timestamp__gt = dt_start).order_by('-timestamp')
-  template = loader.get_template(template_file)
   ctx = Context(
       {
           'mintime': dt_start,
@@ -35,7 +35,7 @@ def index(request, template_file):
           'wizardvalues': wiz,
           'bazal': baz,
       })
-  return HttpResponse(template.render(context=ctx))
+  return render_to_response(template_file, ctx, context_instance=RequestContext(request))
 
 
 def percentile(n):
@@ -79,10 +79,9 @@ def stats(request):
   daily_min = by_hour_and_day.groupby(['hour']).min()
   daily = by_hour_and_day.groupby(['hour']).agg([np.min, np.max, np.mean, percentile(15), percentile(85)])
   
-  template = loader.get_template('bgmonitor/stats.html')  
   ctx = Context(
       {
           'measures': daily,
       })
       
-  return HttpResponse(template.render(context=ctx))
+  return render_to_response('bgmonitor/stats.html', ctx, context_instance=RequestContext(request))
