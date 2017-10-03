@@ -13,6 +13,18 @@
 		<title>{% block title %}Change me: title{% endblock %}</title>
 	</head>
 	<body>
+		<nav class="navbar navbar-default">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="#">Diabmon</a>
+				</div>
+				<ul class="nav navbar-nav">
+					<li class="active"><a href="{% url 'bgmonitor:main' %}">Hourly</a></li>
+					<li><a href="{% url 'bgmonitor:main_details' %}">Details</a></li>
+					<li><a href="{% url 'bgmonitor:stats' %}">14d Stats</a></li>
+				</ul>
+			</div>
+		</nav>
 		<section id="main">
 			{% block content %}Change me: content{% endblock %}
 		</section>
