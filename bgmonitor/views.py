@@ -10,7 +10,14 @@ import numpy as np
 
 from django.http import HttpResponse
 
-def index(request):
+
+def main(request):
+    return index(request, "'bgmonitor/actual.html'")
+
+def main_details(request):
+    return index(request, "'bgmonitor/actual_details.html'")
+          
+def index(request, template_file):
   #msr = BGMeasure.objects.order_by('-timestamp')[:10]
   dt_end = datetime.now()
   dt_start = dt_end - timedelta(days=2)
@@ -18,7 +25,7 @@ def index(request):
   bol = AllEvents.objects.filter(type = "NormalBolusDeliveredEvent", timestamp__gt = dt_start).order_by('-timestamp')
   wiz = AllEvents.objects.filter(type = "BolusWizardEstimateEvent", timestamp__gt = dt_start).order_by('-timestamp')
   baz = AllEvents.objects.filter(type = "BasalSegmentStartEvent", timestamp__gt = dt_start).order_by('-timestamp')
-  template = loader.get_template('xxx/index.html')
+  template = loader.get_template(template_file)
   ctx = Context(
       {
           'mintime': dt_start,
@@ -37,7 +44,7 @@ def percentile(n):
   percentile_.__name__ = 'percentile_%s' % n
   return percentile_
 
-def testFill(request):
+def stats(request):
   #msr = BGMeasure.objects.order_by('-timestamp')[:10]
   dt_start = datetime.today().date() - timedelta(days=14)
   msr_tmp = BGMeasure.objects.filter(timestamp__gt = dt_start).order_by('timestamp')
