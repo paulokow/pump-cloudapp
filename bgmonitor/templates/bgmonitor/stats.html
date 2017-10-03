@@ -1,10 +1,8 @@
-<html>
-    <head>
-        <!-- Latest compiled and minified CSS --><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
-        <!-- jQuery library --><script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-        <!-- Latest compiled JavaScript --><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>  
-        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
+{% extends "bgmonitor/master.html" %}
+{% block title %}
+Statistics view on the last 14 days
+{% endblock %}
+{% block scripts %}
       google.charts.load('current', {'packages':['corechart']});
       google.charts.setOnLoadCallback(drawChart);
 
@@ -45,11 +43,9 @@
 
         chart.draw(data, options);
       }
-    </script>
+{% endblock %}
 
-     </head>
-    <body>
-        <section id="main">
+{% block content %}
         <div class="container">
          <div class="col-md-6">
           <table class="table table-striped table-hover">
@@ -76,6 +72,4 @@
          </div>
          <div id="curve_chart" class="col-md-6"></div>
         </div>
-       </section>
-    </body>
-</html>
+{% endblock %}
