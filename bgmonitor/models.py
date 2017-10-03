@@ -45,18 +45,42 @@ class AllEvents (models.Model):
         elif self.type == "BasalSegmentStartEvent":
             self.__class__ = Basal            
           
+class BGMeasureManager(models.Manager):
+    def get_query_set(self):
+        return super(BGMeasureManager, self).get_query_set().filter(
+        	type='BloodGlucoseReadingEvent')
+
 class BGMeasure (AllEvents):
+    objects = BGMeasureManager()
     class Meta:
         proxy = True
+
+class BolusesManager(models.Manager):
+    def get_query_set(self):
+        return super(BolusesManager, self).get_query_set().filter(
+        	type='NormalBolusDeliveredEvent')
 
 class Boluses (AllEvents):
+    objects = BolusesManager()
     class Meta:
         proxy = True
+
+class BolusWizardManager(models.Manager):
+    def get_query_set(self):
+        return super(BolusWizardManager, self).get_query_set().filter(
+        	type='BolusWizardEstimateEvent')
 
 class BolusWizard (AllEvents):
+    objects = BolusWizardManager()
     class Meta:
         proxy = True
 
+class BasalManager(models.Manager):
+    def get_query_set(self):
+        return super(BasalManager, self).get_query_set().filter(
+        	type='BasalSegmentStartEvent')
+
 class Basal (AllEvents):
+    objects = BasalManager()
     class Meta:
         proxy = True

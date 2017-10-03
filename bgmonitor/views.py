@@ -1,7 +1,7 @@
 # Create your views here.
 
 from django.template import loader, Context, RequestContext
-from .models import AllEvents, BGMeasure, Boluses
+from .models import *
 from datetime import datetime, timedelta
 from pandas.core.frame import DataFrame
 import numpy as np
@@ -22,10 +22,10 @@ def index(request, template_file):
   #msr = BGMeasure.objects.order_by('-timestamp')[:10]
   dt_end = datetime.now()
   dt_start = dt_end - timedelta(days=2)
-  msr = AllEvents.objects.filter(type = "BloodGlucoseReadingEvent", timestamp__gt = dt_start).order_by('-timestamp')
-  bol = AllEvents.objects.filter(type = "NormalBolusDeliveredEvent", timestamp__gt = dt_start).order_by('-timestamp')
-  wiz = AllEvents.objects.filter(type = "BolusWizardEstimateEvent", timestamp__gt = dt_start).order_by('-timestamp')
-  baz = AllEvents.objects.filter(type = "BasalSegmentStartEvent", timestamp__gt = dt_start).order_by('-timestamp')
+  msr = BGMeasure.objects.filter(timestamp__gt = dt_start).order_by('-timestamp')
+  bol = Boluses.objects.filter(timestamp__gt = dt_start).order_by('-timestamp')
+  wiz = BolusWizard.objects.filter(timestamp__gt = dt_start).order_by('-timestamp')
+  baz = Basal.objects.filter(timestamp__gt = dt_start).order_by('-timestamp')
   ctx = Context(
       {
           'mintime': dt_start,
@@ -47,7 +47,7 @@ def percentile(n):
 def stats(request):
   #msr = BGMeasure.objects.order_by('-timestamp')[:10]
   dt_start = datetime.today().date() - timedelta(days=14)
-  msr_tmp = AllEvents.objects.filter(type = "BloodGlucoseReadingEvent", timestamp__gt = dt_start).order_by('timestamp')
+  msr_tmp = BGMeasure.objects.filter(timestamp__gt = dt_start).order_by('timestamp')
   msr = []
   last_it = None
   for it in msr_tmp:
