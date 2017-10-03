@@ -19,9 +19,9 @@
 					<a class="navbar-brand" href="#">Diabmon</a>
 				</div>
 				<ul class="nav navbar-nav">
-					<li class="active"><a href="{% url 'main' %}">Hourly</a></li>
-					<li><a href="{% url 'main_details' %}">Details</a></li>
-					<li><a href="{% url 'stats' %}">14d Stats</a></li>
+					<li {% if request.resolver_match.url_name == 'main' %}class="active"{% endif %}><a href="{% url 'main' %}">Hourly</a></li>
+					<li {% if request.resolver_match.url_name == 'main_details' %}class="active"{% endif %}><a href="{% url 'main_details' %}">Details</a></li>
+					<li {% if request.resolver_match.url_name == 'stats' %}class="active"{% endif %}><a href="{% url 'stats' %}">14d Stats</a></li>
 				</ul>
 			</div>
 		</nav>
