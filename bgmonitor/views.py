@@ -47,7 +47,7 @@ def percentile(n):
 def stats(request):
   #msr = BGMeasure.objects.order_by('-timestamp')[:10]
   dt_start = datetime.today().date() - timedelta(days=14)
-  msr_tmp = BGMeasure.objects.filter(timestamp__gt = dt_start).order_by('timestamp')
+  msr_tmp = AllEvents.objects.filter(type = "BloodGlucoseReadingEvent", timestamp__gt = dt_start).order_by('timestamp')
   msr = []
   last_it = None
   for it in msr_tmp:
@@ -79,7 +79,7 @@ def stats(request):
   daily_min = by_hour_and_day.groupby(['hour']).min()
   daily = by_hour_and_day.groupby(['hour']).agg([np.min, np.max, np.mean, percentile(15), percentile(85)])
   
-  template = loader.get_template('xxx/index2.html')  
+  template = loader.get_template('bgmonitor/stats.html')  
   ctx = Context(
       {
           'measures': daily,
