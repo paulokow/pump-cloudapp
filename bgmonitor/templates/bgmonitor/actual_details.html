@@ -12,7 +12,7 @@
       function roundMinutes(date) {
 //         date.setHours(date.getHours() + Math.round(date.getMinutes()/60));
 //         date.setMinutes(0);
-         date.setSeconds(0);
+//         date.setSeconds(0);
          date.setMilliseconds(0);
          return date;
       }
@@ -48,63 +48,6 @@
          var data = google.visualization.data.join(databg, datawiz, 'full', [[0, 0]], [1], [1]);
          var data = google.visualization.data.join(data, databolus, 'full', [[0, 0]], [1,2], [1]);
          var datafull = google.visualization.data.join(data, datalimits, 'full', [[0, 0]], [1,2,3], [1,2]);
-
-		function floorDate(datetime) {
-		  var newDate = new Date(datetime);
-		  //newDate.setHours(0);
-		  newDate.setMinutes(0);
-		  newDate.setSeconds(0);
-		  return newDate;
-		}
-		
-		function avgNotNulls(arr) {
-		  var cnt = 0;
-		  var sum = 0;
-		  for (var i = 0; i < arr.length; i++) {
-		    if (arr[i] != null)
-		    {
-		      cnt++;
-		      sum += arr[i];
-		    }
-		  }
-		  return cnt > 0 ? sum / cnt : null;
-		}
-		
-		function sumNotNull(arr) {
-		  var cnt = 0;
-		  var sum = 0;
-		  for (var i = 0; i < arr.length; i++) {
-		    if (arr[i] != null)
-		    {
-		      cnt++;
-		      sum += arr[i];
-		    }
-		  }
-		  return cnt > 0 ? sum : null;   
-		}
-		
-		var newData = google.visualization.data.group(data, [{
-		     column: 0,
-		     modifier: floorDate,
-		     type: 'datetime'
-		 }], [{
-		     column: 1,
-		     label: 'BG',
-		     aggregation: avgNotNulls,
-		     type: 'number'
-		 }, {
-		     column: 2,
-		     label: 'KE',
-		     aggregation: sumNotNull,
-		     type: 'number'
-		 }, {
-		     column: 3,
-		     label: 'Bolus',
-		     aggregation: sumNotNull,
-		     type: 'number'
-		 }]);
-
-         var newDataWithBorders = google.visualization.data.join(newData, datalimits, 'full', [[0, 0]], [1,2,3], [1,2]);
          
          var options = {
           title: 'BG Values',
@@ -141,14 +84,10 @@
         };
 
         var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-        var chart2 = new google.visualization.LineChart(document.getElementById('curve_chart2'));
 		var table = new google.visualization.Table(document.getElementById('table_div'));
-		var table2 = new google.visualization.Table(document.getElementById('table_div2'));
 
         chart.draw(datafull, options);
 		table.draw(data, {width: 600,});
-        chart2.draw(newDataWithBorders, options);
-		table2.draw(newData, {width: 600,});
       }
     </script>
     </head>
@@ -157,10 +96,6 @@
         <div class="container">
           <div id="curve_chart" class="col-md-6"></div>
           <div id="table_div" class="col-md-6"></div>
-        </div>
-        <div class="container">        
-          <div id="curve_chart2" class="col-md-6"></div>
-          <div id="table_div2" class="col-md-6"></div>
         </div>
        </section>
     </body>
