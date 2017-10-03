@@ -1,4 +1,7 @@
 {% extends "bgmonitor/master_actual.html" %}
+{% block title %}
+Hourly view on the actual data
+{% endblock}
 {% block processdata %}
 		function floorDate(datetime) {
 			var newDate = new Date(datetime);
