@@ -81,5 +81,18 @@
 		{% block processdata %}
 			// here some post-processing and rendering code
 		{% endblock %}
+
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+		var table = new google.visualization.Table(document.getElementById('table_div'));
+
+        chart.draw(datafull, options);
+		table.draw(data, {width: 600,});
       }
+{% endblock %}
+
+{% block content %}
+        <div class="container">        
+          <div id="curve_chart2" class="col-md-6"></div>
+          <div id="table_div2" class="col-md-6"></div>
+        </div>
 {% endblock %}

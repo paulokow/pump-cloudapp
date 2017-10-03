@@ -1,15 +1,61 @@
 {% extends "bgmonitor/master_actual.html" %}
 {% block processdata %}
-        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-		var table = new google.visualization.Table(document.getElementById('table_div'));
+		function floorDate(datetime) {
+			var newDate = new Date(datetime);
+			//newDate.setHours(0);
+			newDate.setMinutes(0);
+			newDate.setSeconds(0);
+			return newDate;
+		}
 
-        chart.draw(datafull, options);
-		table.draw(data, {width: 600,});
+
+		function avgNotNulls(arr) {
+			var cnt = 0;
+			var sum = 0;
+			for (var i = 0; i < arr.length; i++) {
+				if (arr[i] != null)
+				{
+					cnt++;
+					sum += arr[i];
+				}
+			}
+			return cnt > 0 ? sum / cnt : null;
+		}
+		
+		function sumNotNull(arr) {
+			var cnt = 0;
+			var sum = 0;
+			for (var i = 0; i < arr.length; i++) {
+				if (arr[i] != null)
+				{
+					cnt++;
+					sum += arr[i];
+				}
+			}
+			return cnt > 0 ? sum : null;   
+		}
+
+		var data = google.visualization.data.group(data, [{
+		     column: 0,
+		     modifier: floorDate,
+		     type: 'datetime'
+		 }], [{
+		     column: 1,
+		     label: 'BG',
+		     aggregation: avgNotNulls,
+		     type: 'number'
+		 }, {
+		     column: 2,
+		     label: 'KE',
+		     aggregation: sumNotNull,
+		     type: 'number'
+		 }, {
+		     column: 3,
+		     label: 'Bolus',
+		     aggregation: sumNotNull,
+		     type: 'number'
+		 }]);
+
+		var datafull = google.visualization.data.join(newData, datalimits, 'full', [[0, 0]], [1,2,3], [1,2]);
 {% endblock %}
 
-{% block content %}
-        <div class="container">        
-          <div id="curve_chart2" class="col-md-6"></div>
-          <div id="table_div2" class="col-md-6"></div>
-        </div>
-{% endblock %}
