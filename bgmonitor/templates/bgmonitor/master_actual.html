@@ -49,7 +49,6 @@
           curveType: 'function',
           interpolateNulls: true,
           height: 450,
-          width: 600,
           bar: {
             groupWidth: 20,
           },
@@ -86,7 +85,8 @@
 		var table = new google.visualization.Table(document.getElementById('table_div'));
 
         chart.draw(datafull, options);
-		table.draw(data, {width: 600,});
+//		table.draw(data);
+		table.draw(data, {width: "100%",});
       }
 {% endblock %}
 
