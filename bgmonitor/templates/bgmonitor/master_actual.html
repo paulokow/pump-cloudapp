@@ -1,5 +1,9 @@
 {% extends "bgmonitor/master.html" %}
 {% block scripts %}
+      setInterval(function() {
+                  window.location.reload();
+                }, 5*60*1000);
+
       google.charts.load('current', {'packages':['corechart']});
       google.charts.load('current', {'packages':['table']});
       google.charts.setOnLoadCallback(drawChart);
