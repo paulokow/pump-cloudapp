@@ -50,7 +50,13 @@ Statistics view on the last 14 days
 
 {% block content %}
         <div class="container">
-         <div id="curve_chart" class="col-md-6"></div>
-         <div id="curve_table" class="col-md-6"></div>
+          <div class="row">
+            <div class="col-md-2">{{dt_start|date:'Y-m-d'}}</div>
+            <div class="col-md-2">{{dt_end|date:'Y-m-d'}}</div>
+          </div>
+          <div class="row">
+            <div id="curve_chart" class="col-md-6"></div>
+            <div id="curve_table" class="col-md-6"></div>
+          </div>
         </div>
 {% endblock %}

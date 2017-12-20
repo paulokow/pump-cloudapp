@@ -19,15 +19,24 @@ def main_details(request):
     return index(request, "bgmonitor/actual_details.html")
           
 def index(request, template_file):
-  #msr = BGMeasure.objects.order_by('-timestamp')[:10]
-  dt_end = datetime.now()
-  dt_start = dt_end - timedelta(days=2)
-  msr = BGMeasure.objects.filter(timestamp__gt = dt_start).order_by('-timestamp')
-  bol = Boluses.objects.filter(timestamp__gt = dt_start).order_by('-timestamp')
-  wiz = BolusWizard.objects.filter(timestamp__gt = dt_start).order_by('-timestamp')
-  baz = Basal.objects.filter(timestamp__gt = dt_start).order_by('-timestamp')
+  try:
+    dt_end = datetime.strptime(request.GET.get('end', ''), "%Y-%m-%d");  
+  except ValueError:
+    dt_end =  datetime.now() 
+
+  try:
+    dt_start = datetime.strptime(request.GET.get('start', ''), "%Y-%m-%d");  
+  except ValueError:
+    dt_start =  dt_end - timedelta(days=2)  
+
+  msr = BGMeasure.objects.filter(timestamp__gt = dt_start).filter(timestamp__lte = dt_end).order_by('-timestamp')
+  bol = Boluses.objects.filter(timestamp__gt = dt_start).filter(timestamp__lte = dt_end).order_by('-timestamp')
+  wiz = BolusWizard.objects.filter(timestamp__gt = dt_start).filter(timestamp__lte = dt_end).order_by('-timestamp')
+  baz = Basal.objects.filter(timestamp__gt = dt_start).filter(timestamp__lte = dt_end).order_by('-timestamp')
   ctx = Context(
       {
+          'dt_start': dt_start,
+          'dt_end': dt_end,
           'mintime': dt_start,
           'maxtime': dt_end,
           'measures': msr,
@@ -45,9 +54,17 @@ def percentile(n):
   return percentile_
 
 def stats(request):
-  #msr = BGMeasure.objects.order_by('-timestamp')[:10]
-  dt_start = datetime.today().date() - timedelta(days=14)
-  msr_tmp = BGMeasure.objects.filter(timestamp__gt = dt_start).order_by('timestamp')
+  try:
+    dt_end = datetime.strptime(request.GET.get('end', ''), "%Y-%m-%d");
+  except ValueError:
+    dt_end = datetime.today().date()
+
+  try:
+    dt_start = datetime.strptime(request.GET.get('start', ''), "%Y-%m-%d");
+  except ValueError:
+    dt_start =  dt_end - timedelta(days=14)
+
+  msr_tmp = BGMeasure.objects.filter(timestamp__gt = dt_start).filter(timestamp__lte = dt_end).order_by('timestamp')
   msr = []
   last_it = None
   for it in msr_tmp:
@@ -81,6 +98,8 @@ def stats(request):
   
   ctx = Context(
       {
+          'dt_start': dt_start,
+          'dt_end': dt_end,
           'measures': daily,
       })
       
