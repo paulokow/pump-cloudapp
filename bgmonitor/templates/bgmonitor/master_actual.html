@@ -1,5 +1,8 @@
 {% extends "bgmonitor/master.html" %}
 {% block scripts %}
+      {% block graphsettings %}
+      var detailedGraphPointSize = 5;
+      {% endblock %}
       setInterval(function() {
                   window.location.reload();
                 }, 5*60*1000);
@@ -58,7 +61,7 @@
           },
           colors: ['#3366cc', '#109618', '#990099', '#dc3912', '#ff9900'],
           series: {
-            0: { pointSize: 5, targetAxisIndex: 0 },
+            0: { pointSize: detailedGraphPointSize, targetAxisIndex: 0 },
             1: { pointSize: 4, pointShape: 'square', targetAxisIndex: 1, interpolateNulls: false, type: 'bars' },
             2: { pointSize: 4, pointShape: 'diamond', targetAxisIndex: 1, interpolateNulls: false, type: 'bars' },            
             3: { targetAxisIndex: 0 },
