@@ -33,7 +33,7 @@ def index(request, template_file):
           'measures': msr,
           'boluses': bol,
           'wizardvalues': wiz,
-          'bazal': baz,
+          'basal': baz,
       })
   return render_to_response(template_file, ctx, context_instance=RequestContext(request))
 

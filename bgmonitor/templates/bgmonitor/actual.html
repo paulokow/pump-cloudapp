@@ -57,8 +57,13 @@ Hourly view on the actual data
 		     label: 'Bolus',
 		     aggregation: sumNotNull,
 		     type: 'number'
+		 }, {
+		     column: 4,
+		     label: 'Basal',
+		     aggregation: avgNotNulls,
+		     type: 'number'
 		 }]);
 
-		var datafull = google.visualization.data.join(data, datalimits, 'full', [[0, 0]], [1,2,3], [1,2]);
+		var datafull = google.visualization.data.join(data, datalimits, 'full', [[0, 0]], [1,2,3,4], [1,2]);
 {% endblock %}
 

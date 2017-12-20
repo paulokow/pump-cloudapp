@@ -12,11 +12,7 @@
       google.charts.setOnLoadCallback(drawChart);
 
       function roundMinutes(date) {
-//         date.setHours(date.getHours() + Math.round(date.getMinutes()/60));
-//         date.setMinutes(0);
-//         date.setSeconds(0);
-         date.setMilliseconds(0);
-         return date;
+           return new Date(Math.round(date.getTime() / 1000) * 1000);
       }
 
       function drawChart() {
@@ -33,6 +29,14 @@
            databolus.addRow([roundMinutes(new Date("{{ m.timestamp.isoformat }}")), {{ m.delivered }}]);
          {% endfor %}
          
+         var databasal = new google.visualization.DataTable();
+         databasal.addColumn('datetime', 'Date & Time');
+         databasal.addColumn('number', 'Basal');
+	 // {{ basal }}
+         {% for b in basal %}
+             databasal.addRow([roundMinutes(new Date("{{ b.timestamp.isoformat }}")), {{ b.rate }}]);
+         {% endfor %}
+
          var datalimits = new google.visualization.DataTable();
          datalimits.addColumn('datetime', 'Date & Time');
          datalimits.addColumn('number', 'BG Low');
@@ -49,7 +53,8 @@
          
          var data = google.visualization.data.join(databg, datawiz, 'full', [[0, 0]], [1], [1]);
          var data = google.visualization.data.join(data, databolus, 'full', [[0, 0]], [1,2], [1]);
-         var datafull = google.visualization.data.join(data, datalimits, 'full', [[0, 0]], [1,2,3], [1,2]);
+         var data = google.visualization.data.join(data, databasal, 'full', [[0, 0]], [1,2,3], [1]);
+         var datafull = google.visualization.data.join(data, datalimits, 'full', [[0, 0]], [1,2,3,4], [1,2]);
          
          var options = {
           title: 'BG Values',
@@ -61,11 +66,12 @@
           },
           colors: ['#3366cc', '#109618', '#990099', '#dc3912', '#ff9900'],
           series: {
-            0: { pointSize: detailedGraphPointSize, targetAxisIndex: 0 },
-            1: { pointSize: 4, pointShape: 'square', targetAxisIndex: 1, interpolateNulls: false, type: 'bars' },
-            2: { pointSize: 4, pointShape: 'diamond', targetAxisIndex: 1, interpolateNulls: false, type: 'bars' },            
-            3: { targetAxisIndex: 0 },
-            4: { targetAxisIndex: 0 },
+            0: { pointSize: detailedGraphPointSize, color: '#3366cc', targetAxisIndex: 0 },
+            1: { pointSize: 4, color: '#109618', pointShape: 'square', targetAxisIndex: 1, interpolateNulls: false, type: 'bars' },
+            2: { pointSize: 4, color: '#990099', pointShape: 'diamond', targetAxisIndex: 1, interpolateNulls: false, type: 'bars' },            
+            3: { color: 'gray', pointSize: 2, pointShape: 'diamond', targetAxisIndex: 1 },           
+            4: { color: '#dc3912', targetAxisIndex: 0 },
+            5: { color: '#ff9900', targetAxisIndex: 0 },
           },
           legend: { position: 'bottom' },
           hAxis: {
