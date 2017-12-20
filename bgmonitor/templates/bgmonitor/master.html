@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
     <head>
@@ -5,6 +6,9 @@
         <!-- jQuery library --><script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
         <!-- Latest compiled JavaScript --><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>  
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript" src="{% static 'bgmonitor/NoSleep.min.js' %}"></script>
+	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 		<script type="text/javascript">
 		<!--
 		{% block scripts %}{% endblock %}
@@ -27,6 +31,31 @@
 		</nav>
 		<section id="main">
 			{% block content %}Change me: content{% endblock %}
+
+		<button id="keepscreentoggle" type="button" class="btn btn-secondary">Keep screen off</button>
+ <script>
+      var noSleep = new NoSleep();
+      var noSleepOn = false;
+
+      document.querySelector("#keepscreentoggle").addEventListener('click', function() {
+        btn = document.querySelector("#keepscreentoggle");
+        if (!noSleepOn) {
+          noSleep.enable(); // keep the screen on!
+          noSleepOn = true;
+	  btn.classList.add("btn-primary");
+	  btn.classList.remove("btn-secondary");
+          btn.innerHTML="Keep screen on";
+          console.log("NoSleep on");
+        } else {
+          noSleep.disable(); // let the screen turn off.
+          noSleepOn = false;
+	  btn.classList.add("btn-secondary");
+	  btn.classList.remove("btn-primary");
+          btn.innerHTML="Keep screen off";
+          console.log("NoSleep off");
+        }
+      }, false);
+    </script>			
 		</section>
 	</body>
 </html>
