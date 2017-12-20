@@ -22,7 +22,7 @@ def index(request, template_file):
   try:
     dt_end = datetime.strptime(request.GET.get('end', ''), "%Y-%m-%d");  
   except ValueError:
-    dt_end =  datetime.utcnow() 
+    dt_end =  datetime.now() + timedelta(hours=2) 
 
   try:
     dt_start = datetime.strptime(request.GET.get('start', ''), "%Y-%m-%d");  
