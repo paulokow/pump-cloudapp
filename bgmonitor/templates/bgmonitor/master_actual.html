@@ -50,11 +50,30 @@
          {% for m in wizardvalues %}
            datawiz.addRow([roundMinutes(new Date("{{ m.timestamp.isoformat }}")), {{ m.carbInput }}]);
          {% endfor %}
-         
+
+	 var dataevents = new google.visualization.DataTable();
+	 dataevents.addColumn('datetime', 'Date & Time');
+	 dataevents.addColumn('number', 'Event');
+	 dataevents.addColumn({type: 'string', role: 'style'});
+	 dataevents.addColumn({type: 'string', role: 'tooltip'});
+	 
+         {% for e in events %}
+	   {% if e.eventtype == "InsulinDeliveryStoppedEvent" %}
+             dataevents.addRow([roundMinutes(new Date("{{ e.timestamp.isoformat }}")), 0, 'color: red', '{{ e.description }}']);
+           {% elif e.eventtype == "InsulinDeliveryRestartedEvent" %}
+             dataevents.addRow([roundMinutes(new Date("{{ e.timestamp.isoformat }}")), 0, 'color: green', '{{ e.description }}']);
+           {% elif e.eventtype == "SensorAlertSilenceStartedEvent" %}
+             dataevents.addRow([roundMinutes(new Date("{{ e.timestamp.isoformat }}")), 0, 'color: gold', '{{ e.description }}']);
+           {% elif e.eventtype == "SensorAlertSilenceEndedEvent" %}
+             dataevents.addRow([roundMinutes(new Date("{{ e.timestamp.isoformat }}")), 0, 'color: goldenrod', '{{ e.description }}']);
+           {% endif %}
+         {% endfor %}
+                                      
          var data = google.visualization.data.join(databg, datawiz, 'full', [[0, 0]], [1], [1]);
          var data = google.visualization.data.join(data, databolus, 'full', [[0, 0]], [1,2], [1]);
          var data = google.visualization.data.join(data, databasal, 'full', [[0, 0]], [1,2,3], [1]);
          var datafull = google.visualization.data.join(data, datalimits, 'full', [[0, 0]], [1,2,3,4], [1,2]);
+         var datafull = google.visualization.data.join(datafull, dataevents, 'full', [[0, 0]], [1,2,3,4,5,6], [1,2,3]);
          
          var options = {
           title: 'BG Values',
@@ -72,6 +91,7 @@
             3: { color: 'gray', pointSize: 2, pointShape: 'diamond', targetAxisIndex: 1 },           
             4: { color: '#dc3912', targetAxisIndex: 0 },
             5: { color: '#ff9900', targetAxisIndex: 0 },
+            6: { color: 'black', pointSize: 8, pointShape: 'diamond', targetAxisIndex: 0, visibleInLegend: false, interpolateNulls: false, type: 'scatter', targetAxisIndex: 1 },
           },
           legend: { position: 'bottom' },
           hAxis: {

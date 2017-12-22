@@ -33,6 +33,10 @@ class AllEvents (models.Model):
     #Basal
     rate = models.FloatField(null=True)
     patternName = models.TextField(null=True)      
+
+    #PumpEvent
+    eventtype = models.TextField(null=True)
+    description = models.TextField(null=True)
     
     def __init__(self, *args, **kwargs):
         super(AllEvents, self).__init__(*args, **kwargs)
@@ -44,6 +48,8 @@ class AllEvents (models.Model):
             self.__class__ = BolusWizard            
         elif self.type == "BasalSegmentStartEvent":
             self.__class__ = Basal            
+        elif self.type == "PumpEvent":
+            self.__class__ = PumpEvent            
           
 class BGMeasureManager(models.Manager):
     def get_query_set(self):
@@ -82,5 +88,15 @@ class BasalManager(models.Manager):
 
 class Basal (AllEvents):
     objects = BasalManager()
+    class Meta:
+        proxy = True
+
+class PumpEventManager(models.Manager):
+    def get_query_set(self):
+        return super(PumpEventManager, self).get_query_set().filter(
+        	type='PumpEvent')
+
+class PumpEvent (AllEvents):
+    objects = PumpEventManager()
     class Meta:
         proxy = True

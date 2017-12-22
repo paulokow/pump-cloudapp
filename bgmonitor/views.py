@@ -3,6 +3,7 @@
 from django.template import loader, Context, RequestContext
 from .models import *
 from datetime import datetime, timedelta
+from dateutil import tz
 from pandas.core.frame import DataFrame
 import numpy as np
 from django.shortcuts import render_to_response
@@ -17,22 +18,26 @@ def main(request):
 
 def main_details(request):
     return index(request, "bgmonitor/actual_details.html")
-          
+
+def _timezonediff():
+  return tz.tzlocal().utcoffset(datetime.now())
+
 def index(request, template_file):
   try:
-    dt_end = datetime.strptime(request.GET.get('end', ''), "%Y-%m-%d");  
+    dt_end = datetime.strptime(request.GET.get('end', ''), "%Y-%m-%d") + timedelta(days=1);  
   except ValueError:
-    dt_end =  datetime.now() + timedelta(hours=2) 
+    dt_end =  datetime.now()
 
   try:
     dt_start = datetime.strptime(request.GET.get('start', ''), "%Y-%m-%d");  
   except ValueError:
-    dt_start =  dt_end - timedelta(days=2)  
+    dt_start =  dt_end - timedelta(days=2)
 
-  msr = BGMeasure.objects.filter(timestamp__gt = dt_start).filter(timestamp__lte = dt_end).order_by('-timestamp')
-  bol = Boluses.objects.filter(timestamp__gt = dt_start).filter(timestamp__lte = dt_end).order_by('-timestamp')
-  wiz = BolusWizard.objects.filter(timestamp__gt = dt_start).filter(timestamp__lte = dt_end).order_by('-timestamp')
-  baz = Basal.objects.filter(timestamp__gt = dt_start).filter(timestamp__lte = dt_end).order_by('-timestamp')
+  msr = BGMeasure.objects.filter(timestamp__gt = dt_start + _timezonediff()).filter(timestamp__lte = dt_end + _timezonediff()).order_by('-timestamp')
+  bol = Boluses.objects.filter(timestamp__gt = dt_start + _timezonediff()).filter(timestamp__lte = dt_end + _timezonediff()).order_by('-timestamp')
+  wiz = BolusWizard.objects.filter(timestamp__gt = dt_start + _timezonediff()).filter(timestamp__lte = dt_end + _timezonediff()).order_by('-timestamp')
+  baz = Basal.objects.filter(timestamp__gt = dt_start + _timezonediff()).filter(timestamp__lte = dt_end + _timezonediff()).order_by('-timestamp')
+  events = PumpEvent.objects.filter(timestamp__gt = dt_start + _timezonediff()).filter(timestamp__lte = dt_end + _timezonediff()).order_by('-timestamp')
   ctx = Context(
       {
           'dt_start': dt_start,
@@ -43,6 +48,7 @@ def index(request, template_file):
           'boluses': bol,
           'wizardvalues': wiz,
           'basal': baz,
+          'events': events,
       })
   return render_to_response(template_file, ctx, context_instance=RequestContext(request))
 
@@ -64,7 +70,7 @@ def stats(request):
   except ValueError:
     dt_start =  dt_end - timedelta(days=14)
 
-  msr_tmp = BGMeasure.objects.filter(timestamp__gt = dt_start).filter(timestamp__lte = dt_end).order_by('timestamp')
+  msr_tmp = BGMeasure.objects.filter(timestamp__gt = dt_start + _timezonediff()).filter(timestamp__lte = dt_end + _timezonediff()).order_by('timestamp')
   msr = []
   last_it = None
   for it in msr_tmp:
