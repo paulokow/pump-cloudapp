@@ -31,7 +31,7 @@ def index(request, template_file):
   try:
     dt_start = datetime.strptime(request.GET.get('start', ''), "%Y-%m-%d");  
   except ValueError:
-    dt_start =  dt_end - timedelta(days=2)
+    dt_start =  dt_end - timedelta(days=1)
 
   msr = BGMeasure.objects.filter(timestamp__gt = dt_start + _timezonediff()).filter(timestamp__lte = dt_end + _timezonediff()).order_by('-timestamp')
   bol = Boluses.objects.filter(timestamp__gt = dt_start + _timezonediff()).filter(timestamp__lte = dt_end + _timezonediff()).order_by('-timestamp')
