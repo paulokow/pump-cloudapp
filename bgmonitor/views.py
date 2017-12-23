@@ -107,6 +107,7 @@ def stats(request):
       {
           'dt_start': dt_start,
           'dt_end': dt_end,
+          'dt_end_param': dt_end - timedelta(days=1),
           'measures': daily,
       })
       
