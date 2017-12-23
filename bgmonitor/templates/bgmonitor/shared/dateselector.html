@@ -1,0 +1,41 @@
+<!-- START shared/dateselector.html -->
+{% load plus_days %}
+          <div class="row">
+            <form>
+              <input type="hidden" name="start" value="{{ dt_start | plus_days:-1 | date:'Y-m-d'}}" />
+              <input type="hidden" name="end" value="{{ dt_end_param | plus_days:-1 | date:'Y-m-d'}}" />
+              <div class="col-md-1">
+                <input type="submit" class="btn btn-default" value="<" />
+              </div>
+            </form>
+            <form id="datepickform">
+              <div class="col-md-2">
+    	      {% include "bgmonitor/shared/datatimepicker.html" with date_field_name="start" date_field=dt_start only %}
+              </div>
+              <div class="col-md-2">
+  	      {% include "bgmonitor/shared/datatimepicker.html" with date_field_name="end" date_field=dt_end_param only %}
+              </div>
+            </form>
+            <form>
+              <input type="hidden" name="start" value="{{ dt_start | plus_days:1 | date:'Y-m-d'}}" />
+              <input type="hidden" name="end" value="{{ dt_end_param | plus_days:1 | date:'Y-m-d'}}" />
+              <div class="col-md-1">
+                <input type="submit" class="btn btn-default" value=">" />
+              </div>
+            </form>
+
+	    <script type="text/javascript">
+              $(function () {
+                $("#datatimepicker_start").on("dp.change", function (e) {
+                  $('#datepickform').submit();
+                });
+                $("#datatimepicker_end").on("dp.change", function (e) {
+                  $('#datepickform').submit();
+                });                                                        
+              });
+            </script>
+            <div class="col-md-2">
+              <button type="button" class="btn btn-primary" onclick="$('#datepickform').submit();">Go</button>
+            </div>
+          </div>
+<!-- END shared/dateselector.html -->

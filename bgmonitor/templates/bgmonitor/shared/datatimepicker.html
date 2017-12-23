@@ -1,0 +1,13 @@
+<!-- START shared/datetimepicker.html -->
+<div class="input-group date" id="datetimepicker_{{ date_field_name }}">
+    <input class="form-control" id="{{ date_field_name }}" name="{{ date_field_name }}" type="text" value="{{ date_field|date:'Y-m-d' }}" />
+    <span class="input-group-addon">
+        <span class="glyphicon glyphicon-calendar"></span>
+    </span>
+</div>
+<script type="text/javascript">
+	$(function () {
+		$('#datetimepicker_{{ date_field_name }}').datetimepicker({format: 'YYYY-MM-DD'});
+	});
+</script>		                
+<!-- END shared/datetimepicker.html -->

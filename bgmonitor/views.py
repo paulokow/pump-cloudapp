@@ -42,6 +42,7 @@ def index(request, template_file):
       {
           'dt_start': dt_start,
           'dt_end': dt_end,
+          'dt_end_param': dt_end - timedelta(days=1),
           'mintime': dt_start,
           'maxtime': dt_end,
           'measures': msr,
