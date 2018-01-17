@@ -15,12 +15,16 @@
            return new Date(Math.round(date.getTime() / 1000) * 1000);
       }
 
+      function back15min(date) {
+           return new Date(date.getTime() - 15 * 1000);
+      }
+
       function drawChart() {
          var databg = new google.visualization.DataTable();
          databg.addColumn('datetime', 'Date & Time');
          databg.addColumn('number', 'BG Value');
          {% for m in measures %}
-           databg.addRow([roundMinutes(new Date("{{ m.timestamp.isoformat }}")), {{ m.value }}]);
+           databg.addRow([roundMinutes(back15min(new Date("{{ m.timestamp.isoformat }}"))), {{ m.value }}]);
          {% endfor %}
          var databolus = new google.visualization.DataTable();
          databolus.addColumn('datetime', 'Date & Time');
