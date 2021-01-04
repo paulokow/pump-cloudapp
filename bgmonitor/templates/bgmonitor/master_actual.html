@@ -1,15 +1,22 @@
 {% extends "bgmonitor/master.html" %}
 {% block scripts %}
+      {% block graphsettings %}
+      var detailedGraphPointSize = 5;
+      {% endblock %}
+      setInterval(function() {
+                  window.location.reload();
+                }, 5*60*1000);
+
       google.charts.load('current', {'packages':['corechart']});
       google.charts.load('current', {'packages':['table']});
       google.charts.setOnLoadCallback(drawChart);
 
       function roundMinutes(date) {
-//         date.setHours(date.getHours() + Math.round(date.getMinutes()/60));
-//         date.setMinutes(0);
-//         date.setSeconds(0);
-         date.setMilliseconds(0);
-         return date;
+           return new Date(Math.round(date.getTime() / 1000) * 1000);
+      }
+
+      function back15min(date) {
+           return new Date(date.getTime() - 15 * 1000);
       }
 
       function drawChart() {
@@ -17,7 +24,7 @@
          databg.addColumn('datetime', 'Date & Time');
          databg.addColumn('number', 'BG Value');
          {% for m in measures %}
-           databg.addRow([roundMinutes(new Date("{{ m.timestamp.isoformat }}")), {{ m.value }}]);
+           databg.addRow([roundMinutes(back15min(new Date("{{ m.timestamp.isoformat }}"))), {{ m.value }}]);
          {% endfor %}
          var databolus = new google.visualization.DataTable();
          databolus.addColumn('datetime', 'Date & Time');
@@ -26,6 +33,14 @@
            databolus.addRow([roundMinutes(new Date("{{ m.timestamp.isoformat }}")), {{ m.delivered }}]);
          {% endfor %}
          
+         var databasal = new google.visualization.DataTable();
+         databasal.addColumn('datetime', 'Date & Time');
+         databasal.addColumn('number', 'Basal');
+	 // {{ basal }}
+         {% for b in basal %}
+             databasal.addRow([roundMinutes(new Date("{{ b.timestamp.isoformat }}")), {{ b.rate }}]);
+         {% endfor %}
+
          var datalimits = new google.visualization.DataTable();
          datalimits.addColumn('datetime', 'Date & Time');
          datalimits.addColumn('number', 'BG Low');
@@ -39,10 +54,30 @@
          {% for m in wizardvalues %}
            datawiz.addRow([roundMinutes(new Date("{{ m.timestamp.isoformat }}")), {{ m.carbInput }}]);
          {% endfor %}
-         
+
+	 var dataevents = new google.visualization.DataTable();
+	 dataevents.addColumn('datetime', 'Date & Time');
+	 dataevents.addColumn('number', 'Event');
+	 dataevents.addColumn({type: 'string', role: 'style'});
+	 dataevents.addColumn({type: 'string', role: 'tooltip'});
+	 
+         {% for e in events %}
+	   {% if e.eventtype == "InsulinDeliveryStoppedEvent" %}
+             dataevents.addRow([roundMinutes(new Date("{{ e.timestamp.isoformat }}")), 0, 'color: red', '{{ e.description }}']);
+           {% elif e.eventtype == "InsulinDeliveryRestartedEvent" %}
+             dataevents.addRow([roundMinutes(new Date("{{ e.timestamp.isoformat }}")), 0, 'color: green', '{{ e.description }}']);
+           {% elif e.eventtype == "SensorAlertSilenceStartedEvent" %}
+             dataevents.addRow([roundMinutes(new Date("{{ e.timestamp.isoformat }}")), 0, 'color: gold', '{{ e.description }}']);
+           {% elif e.eventtype == "SensorAlertSilenceEndedEvent" %}
+             dataevents.addRow([roundMinutes(new Date("{{ e.timestamp.isoformat }}")), 0, 'color: goldenrod', '{{ e.description }}']);
+           {% endif %}
+         {% endfor %}
+                                      
          var data = google.visualization.data.join(databg, datawiz, 'full', [[0, 0]], [1], [1]);
          var data = google.visualization.data.join(data, databolus, 'full', [[0, 0]], [1,2], [1]);
-         var datafull = google.visualization.data.join(data, datalimits, 'full', [[0, 0]], [1,2,3], [1,2]);
+         var data = google.visualization.data.join(data, databasal, 'full', [[0, 0]], [1,2,3], [1]);
+         var datafull = google.visualization.data.join(data, datalimits, 'full', [[0, 0]], [1,2,3,4], [1,2]);
+         var datafull = google.visualization.data.join(datafull, dataevents, 'full', [[0, 0]], [1,2,3,4,5,6], [1,2,3]);
          
          var options = {
           title: 'BG Values',
@@ -54,11 +89,13 @@
           },
           colors: ['#3366cc', '#109618', '#990099', '#dc3912', '#ff9900'],
           series: {
-            0: { pointSize: 5, targetAxisIndex: 0 },
-            1: { pointSize: 4, pointShape: 'square', targetAxisIndex: 1, interpolateNulls: false, type: 'bars' },
-            2: { pointSize: 4, pointShape: 'diamond', targetAxisIndex: 1, interpolateNulls: false, type: 'bars' },            
-            3: { targetAxisIndex: 0 },
-            4: { targetAxisIndex: 0 },
+            0: { pointSize: detailedGraphPointSize, color: '#3366cc', targetAxisIndex: 0 },
+            1: { pointSize: 4, color: '#109618', pointShape: 'square', targetAxisIndex: 1, interpolateNulls: false, type: 'bars' },
+            2: { pointSize: 4, color: '#990099', pointShape: 'diamond', targetAxisIndex: 1, interpolateNulls: false, type: 'bars' },            
+            3: { color: 'gray', pointSize: 2, pointShape: 'diamond', targetAxisIndex: 1 },           
+            4: { color: '#dc3912', targetAxisIndex: 0 },
+            5: { color: '#ff9900', targetAxisIndex: 0 },
+            6: { color: 'black', pointSize: 8, pointShape: 'diamond', targetAxisIndex: 0, visibleInLegend: false, interpolateNulls: false, type: 'scatter', targetAxisIndex: 1 },
           },
           legend: { position: 'bottom' },
           hAxis: {
@@ -92,7 +129,10 @@
 
 {% block content %}
         <div class="container">        
-          <div id="curve_chart" class="col-md-6"></div>
-          <div id="table_div" class="col-md-6"></div>
+          {% include "bgmonitor/shared/dateselector.html" %}
+          <div class="row">
+            <div id="curve_chart" class="col-md-6"></div>
+            <div id="table_div" class="col-md-6"></div>
+          </div>
         </div>
 {% endblock %}

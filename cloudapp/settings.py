@@ -16,13 +16,16 @@ DATABASES = {
 #        'ENGINE': 'django.db.backends.sqlite3',
 #        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         'ENGINE': 'django_mongodb_engine',
-        'NAME': 'bg_db_test'
+        'NAME': 'bg_db',
+        'HOST': 'mongo',
+        'USER': 'accountUser',
+        'PASSWORD': 'accountPassword',
     }
 }
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ["run.fritz.box", "localhost"]
+ALLOWED_HOSTS = ["run.fritz.box", "localhost", "bgmonitor.localhost"]
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name

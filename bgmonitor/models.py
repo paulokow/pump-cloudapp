@@ -51,6 +51,10 @@ class AllEvents (models.Model):
     sensorBatteryPercent = models.IntegerField(null=True)
     sensorControl = models.TextField(null=True)
 
+    # PumpEvent
+    eventtype = models.TextField(null=True)
+    description = models.TextField(null=True)
+    
     def __init__(self, *args, **kwargs):
         super(AllEvents, self).__init__(*args, **kwargs)
         if self.type == "BloodGlucoseReadingEvent":
@@ -63,7 +67,8 @@ class AllEvents (models.Model):
             self.__class__ = Basal            
         elif self.type == "PumpStatusEvent":
             self.__class__ = PumpStatus
-
+        elif self.type == "PumpEvent":
+            self.__class__ = PumpEvent
 
 class BGMeasureManager(models.Manager):
     def get_query_set(self):
@@ -126,5 +131,15 @@ class PumpStatusManager(models.Manager):
 class PumpStatus(AllEvents):
     objects = PumpStatusManager()
 
+    class Meta:
+        proxy = True
+
+class PumpEventManager(models.Manager):
+    def get_query_set(self):
+        return super(PumpEventManager, self).get_query_set().filter(
+        	type='PumpEvent')
+
+class PumpEvent (AllEvents):
+    objects = PumpEventManager()
     class Meta:
         proxy = True

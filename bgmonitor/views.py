@@ -3,6 +3,7 @@
 from django.template import loader, Context, RequestContext
 from .models import *
 from datetime import datetime, timedelta
+from dateutil import tz
 from pandas.core.frame import DataFrame
 import numpy as np
 from django.shortcuts import render_to_response
@@ -17,23 +18,38 @@ def main(request):
 
 def main_details(request):
     return index(request, "bgmonitor/actual_details.html")
-          
+
+def _timezonediff():
+  return tz.tzlocal().utcoffset(datetime.now())
+
 def index(request, template_file):
-  #msr = BGMeasure.objects.order_by('-timestamp')[:10]
-  dt_end = datetime.now()
-  dt_start = dt_end - timedelta(days=2)
-  msr = BGMeasure.objects.filter(timestamp__gt = dt_start).order_by('-timestamp')
-  bol = Boluses.objects.filter(timestamp__gt = dt_start).order_by('-timestamp')
-  wiz = BolusWizard.objects.filter(timestamp__gt = dt_start).order_by('-timestamp')
-  baz = Basal.objects.filter(timestamp__gt = dt_start).order_by('-timestamp')
+  try:
+    dt_end = datetime.strptime(request.GET.get('end', ''), "%Y-%m-%d") + timedelta(days=1);  
+  except ValueError:
+    dt_end =  datetime.now()
+
+  try:
+    dt_start = datetime.strptime(request.GET.get('start', ''), "%Y-%m-%d");  
+  except ValueError:
+    dt_start =  dt_end - timedelta(days=1)
+
+  msr = BGMeasure.objects.filter(timestamp__gt = dt_start + _timezonediff()).filter(timestamp__lte = dt_end + _timezonediff()).order_by('-timestamp')
+  bol = Boluses.objects.filter(timestamp__gt = dt_start + _timezonediff()).filter(timestamp__lte = dt_end + _timezonediff()).order_by('-timestamp')
+  wiz = BolusWizard.objects.filter(timestamp__gt = dt_start + _timezonediff()).filter(timestamp__lte = dt_end + _timezonediff()).order_by('-timestamp')
+  baz = Basal.objects.filter(timestamp__gt = dt_start + _timezonediff()).filter(timestamp__lte = dt_end + _timezonediff()).order_by('-timestamp')
+  events = PumpEvent.objects.filter(timestamp__gt = dt_start + _timezonediff()).filter(timestamp__lte = dt_end + _timezonediff()).order_by('-timestamp')
   ctx = Context(
       {
+          'dt_start': dt_start,
+          'dt_end': dt_end,
+          'dt_end_param': dt_end - timedelta(days=1),
           'mintime': dt_start,
           'maxtime': dt_end,
           'measures': msr,
           'boluses': bol,
           'wizardvalues': wiz,
-          'bazal': baz,
+          'basal': baz,
+          'events': events,
       })
   return render_to_response(template_file, ctx, context_instance=RequestContext(request))
 
@@ -45,9 +61,17 @@ def percentile(n):
   return percentile_
 
 def stats(request):
-  #msr = BGMeasure.objects.order_by('-timestamp')[:10]
-  dt_start = datetime.today().date() - timedelta(days=14)
-  msr_tmp = BGMeasure.objects.filter(timestamp__gt = dt_start).order_by('timestamp')
+  try:
+    dt_end = datetime.strptime(request.GET.get('end', ''), "%Y-%m-%d");
+  except ValueError:
+    dt_end = datetime.today().date()
+
+  try:
+    dt_start = datetime.strptime(request.GET.get('start', ''), "%Y-%m-%d");
+  except ValueError:
+    dt_start =  dt_end - timedelta(days=14)
+
+  msr_tmp = BGMeasure.objects.filter(timestamp__gt = dt_start + _timezonediff()).filter(timestamp__lte = dt_end + _timezonediff()).order_by('timestamp')
   msr = []
   last_it = None
   for it in msr_tmp:
@@ -81,6 +105,9 @@ def stats(request):
   
   ctx = Context(
       {
+          'dt_start': dt_start,
+          'dt_end': dt_end,
+          'dt_end_param': dt_end - timedelta(days=1),
           'measures': daily,
       })
       
