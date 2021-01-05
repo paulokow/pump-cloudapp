@@ -138,7 +138,6 @@ def pumpstatus(request):
 
 def currentstatus(request):
   status = PumpStatus.objects.latest('timestamp')
-  status.sensorBGL = 773
   status.calibrationdatetime = status.timestamp + timedelta(minutes=status.sensorCalibrationMinutesRemaining) if status.sensorCalibrationMinutesRemaining & 0x0200 == 0 else None
   status.calibrationTimeRemaining = datetime.fromtimestamp(0) + (status.calibrationdatetime - datetime.now()) \
     if status.calibrationdatetime is not None and status.calibrationdatetime > datetime.now() \
