@@ -27,7 +27,7 @@ Current status
               <div class="panel-heading">Sensor BGL:</div>
               <div class="panel-body">
                 <h1>
-                  {% if status.sensorBGL < 0x200 %}
+                  {% if status.sensorBGL < 512 %}
                     {{ status.sensorBGL}}
                   {% else %}
                     n/a
@@ -83,7 +83,7 @@ Current status
             </div>
             <div class="panel panel-default fixed-panel col-md-3">
               <div class="panel-heading">Temp basal</div>
-              <div class="panel-body"><h1>{{ status.tempBasalPercentage }}%</h1></div>
+              <div class="panel-body"><h1>{{ status.tempBasalPercentage|stringformat:"d%" }}</h1></div>
             </div>
             <div class="panel panel-default fixed-panel col-md-3">
               <div class="panel-heading">Temp basal remaining</div>

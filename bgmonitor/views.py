@@ -138,7 +138,7 @@ def pumpstatus(request):
 
 def currentstatus(request):
   status = PumpStatus.objects.latest('timestamp')
-  status.sensorCalibrationMinutesRemaining = 443
+  status.sensorBGL = 773
   status.calibrationdatetime = status.timestamp + timedelta(minutes=status.sensorCalibrationMinutesRemaining) if status.sensorCalibrationMinutesRemaining & 0x0200 == 0 else None
   status.calibrationTimeRemaining = datetime.fromtimestamp(0) + (status.calibrationdatetime - datetime.now()) \
     if status.calibrationdatetime is not None and status.calibrationdatetime > datetime.now() \
@@ -148,6 +148,7 @@ def currentstatus(request):
     if status.tempBasalTime is not None and status.tempBasalTime > datetime.now() \
     else None
   status.sensorBGLTimestamp =  status.sensorBGLTimestamp.replace(tzinfo=tz.tzutc()).astimezone(tz.tzlocal())
+  status.tempBasalPercentage = status.tempBasalPercentage if status.tempBasalTime is not None and status.tempBasalTime > datetime.now() else None
   ctx = Context(
       {
           'status': status
