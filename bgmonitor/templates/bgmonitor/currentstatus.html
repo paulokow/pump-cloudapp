@@ -46,7 +46,7 @@ Current status
             <div class="panel panel-default fixed-panel col-md-3 col-sm-4">
               <div class="panel-heading">Calibration</div>
               <div class="panel-body">
-                <h2>{{ status.calibrationTimeRemaining |time:'h:i' }}</h2>
+                <h2>{{ status.calibrationTimeRemaining.hours }}:{{ status.calibrationTimeRemaining.minutes |stringformat:"02d" }}</h2>
                 <h4>{{ status.calibrationdatetime |date:'Y-m-d H:i' }}</h4>
               </div>
             </div>
@@ -83,7 +83,7 @@ Current status
             </div>
             <div class="panel panel-default fixed-panel col-md-3 col-sm-4">
               <div class="panel-heading">Temp basal remaining</div>
-              <h2>{{ status.tempBasalTimeRemaining |time:'h:i' }}</h2>
+              <h2>{{ status.tempBasalTimeRemaining.hours }}:{{ status.tempBasalTimeRemaining.minutes |stringformat:"02d" }}</h2>
               <h4>{{ status.tempBasalTime |date:'Y-m-d H:i' }}</h4>
           </div>
         </div>

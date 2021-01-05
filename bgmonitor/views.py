@@ -138,12 +138,14 @@ def pumpstatus(request):
 
 def currentstatus(request):
   status = PumpStatus.objects.latest('timestamp')
-  status.calibrationdatetime = status.timestamp + timedelta(minutes=status.sensorCalibrationMinutesRemaining) if status.sensorCalibrationMinutesRemaining & 0x0200 == 0 else None
-  status.calibrationTimeRemaining = datetime.fromtimestamp(0) + (status.calibrationdatetime - datetime.now()) \
+  status.calibrationdatetime = status.timestamp + timedelta(minutes=status.sensorCalibrationMinutesRemaining) if status.sensorCalibrationMinutesRemaining != 0xFFFF else None
+  cal_time_remaining = status.calibrationdatetime - datetime.now() if status.calibrationdatetime is not None else None;
+  status.calibrationTimeRemaining = { "hours": int(cal_time_remaining.seconds / (60 * 60)), "minutes": int(cal_time_remaining.seconds / 60) % 60 } \
     if status.calibrationdatetime is not None and status.calibrationdatetime > datetime.now() \
     else None
   status.tempBasalTime = status.timestamp + timedelta(minutes=status.tempBasalMinutesRemaining) if status.tempBasalMinutesRemaining > 0 else None
-  status.tempBasalTimeRemaining = datetime.fromtimestamp(0) + (status.tempBasalTime - datetime.now()) \
+  basal_time_remaining = status.tempBasalTime - datetime.now() if is not None else None
+  status.tempBasalTimeRemaining = { "hours": int(basal_time_remaining.seconds / (60 * 60)), "minutes": int(basal_time_remaining.seconds / 60) % 60 } \
     if status.tempBasalTime is not None and status.tempBasalTime > datetime.now() \
     else None
   status.sensorBGLTimestamp =  status.sensorBGLTimestamp.replace(tzinfo=tz.tzutc()).astimezone(tz.tzlocal())
