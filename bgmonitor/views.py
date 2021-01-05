@@ -144,7 +144,7 @@ def currentstatus(request):
     if status.calibrationdatetime is not None and status.calibrationdatetime > datetime.now() \
     else None
   status.tempBasalTime = status.timestamp + timedelta(minutes=status.tempBasalMinutesRemaining) if status.tempBasalMinutesRemaining > 0 else None
-  basal_time_remaining = status.tempBasalTime - datetime.now() if is not None else None
+  basal_time_remaining = status.tempBasalTime - datetime.now() if status.tempBasalTime is not None else None
   status.tempBasalTimeRemaining = { "hours": int(basal_time_remaining.seconds / (60 * 60)), "minutes": int(basal_time_remaining.seconds / 60) % 60 } \
     if status.tempBasalTime is not None and status.tempBasalTime > datetime.now() \
     else None
