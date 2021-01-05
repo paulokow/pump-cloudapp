@@ -1,3 +1,10 @@
 *.pyc
 /.project
 /.pydevproject
+.idea
+/venv/
+/_data/*
+
+# don’t ignore keep files
+!.keep
+!.gitkeep
