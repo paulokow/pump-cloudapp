@@ -15,9 +15,6 @@ Pump status history
         var data = new google.visualization.DataTable();
         data.addColumn('datetime', 'Date & Time');
         data.addColumn('number', 'Cal. in (min)');
-        data.addColumn('number', 'BGL');
-        data.addColumn('number', 'Battery');
-        data.addColumn('number', 'Sensor Battery');
         data.addColumn('number', 'Insulin');
 
         var datatable = new google.visualization.DataTable();
@@ -30,13 +27,34 @@ Pump status history
         datatable.addColumn('string', 'Sensor status');
         datatable.addColumn('string', 'Sensor control');
 
+        var battable = new google.visualization.DataTable();
+        battable.addColumn('datetime', 'Date & Time');
+        battable.addColumn('number', 'Battery');
+        battable.addColumn('number', 'Sensor Battery');
+
+        var bolustable = new google.visualization.DataTable();
+        bolustable.addColumn('datetime', 'Date & Time');
+        bolustable.addColumn('number', 'BGL');
+        bolustable.addColumn('number', 'Active insulin');
+        bolustable.addColumn('number', 'Temp basal %');
+        bolustable.addColumn('number', 'Basal rate');
+
         {% for m in statusevents %}
+          battable.addRow([
+            roundMinutes(new Date("{{ m.timestamp.isoformat }}")), 
+            {{ m.batteryLevelPercentage }},
+            {{ m.sensorBatteryPercent }},
+          ]);
+          bolustable.addRow([
+            roundMinutes(new Date("{{ m.timestamp.isoformat }}")), 
+            {{ m.sensorBGL }} < 512 ? {{ m.sensorBGL }} : null,
+            {{ m.activeInsulin }},
+            {{ m.tempBasalMinutesRemaining }} > 0 ? {{ m.tempBasalPercentage }} : null, 
+            {{ m.currentBasalRate }},
+          ]);
           data.addRow([
             roundMinutes(new Date("{{ m.timestamp.isoformat }}")), 
             {{ m.sensorCalibrationMinutesRemaining }} != 65535 ? {{ m.sensorCalibrationMinutesRemaining }} : null,
-            {{ m.sensorBGL }} < 512 ? {{ m.sensorBGL }} : null,
-            {{ m.batteryLevelPercentage }},
-            {{ m.sensorBatteryPercent }},
             {{ m.insulinUnitsRemaining }},
           ]);
           datatable.addRow([
@@ -50,8 +68,9 @@ Pump status history
             "{{ m.sensorControl }}",
           ]);
         {% endfor %}
+
         var options = {
-          title: 'BG Values',
+          title: 'Pums status history',
           curveType: 'function',
           height: 450,
           series: {
@@ -61,9 +80,15 @@ Pump status history
             3: { pointSize: 2, targetAxisIndex: 1 },
             4: { pointSize: 2, targetAxisIndex: 0 },
           },
-          legend: { position: 'right' },
+          legend: { position: 'bottom' },
+          hAxis: {
+            format: "d/M H:mm",
+            slantedText:true, 
+            slantedTextAngle:75
+          },
           vAxes: {
             0: {
+              ticks: [0, 100, 200, 300, 400]
             },
             1: {
               gridlines: {color: 'transparent'},
@@ -73,9 +98,62 @@ Pump status history
         };
 
         var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-        var table = new google.visualization.Table(document.getElementById('curve_table'));
-
         chart.draw(data, options);
+
+        var options_bat = {
+          title: 'Pums battery status',
+          curveType: 'function',
+          height: 450,
+          series: {
+            0: { pointSize: 2, targetAxisIndex: 0 },
+            1: { pointSize: 2, targetAxisIndex: 0 },
+          },
+          legend: { position: 'bottom' },
+          hAxis: {
+            format: "d/M H:mm",
+            slantedText:true, 
+            slantedTextAngle:75
+          },
+          vAxes: {
+            0: {
+              ticks: [0, 25, 50, 75, 100]
+            }
+          }
+        };
+
+        var chart_bat = new google.visualization.LineChart(document.getElementById('battery_chart'));
+        chart_bat.draw(battable, options_bat);        
+
+        var options_bolus = {
+          title: 'BG & Insulin status',
+          curveType: 'function',
+          height: 450,
+          series: {
+            0: { pointSize: 2, targetAxisIndex: 0 },
+            1: { pointSize: 2, targetAxisIndex: 1 },
+            2: { pointSize: 2, targetAxisIndex: 0 },
+            3: { pointSize: 2, targetAxisIndex: 1 },
+          },
+          legend: { position: 'bottom' },
+          hAxis: {
+            format: "d/M H:mm",
+            slantedText:true, 
+            slantedTextAngle:75
+          },
+          vAxes: {
+            0: {
+              ticks: [0, 50, 100, 150, 200, 250, 300, 350, 400]
+            },
+            1: {
+              ticks: [0, 0.5, 1, 2, 3, 4, 5]
+            }
+          }
+        };
+
+        var chart_bolus = new google.visualization.LineChart(document.getElementById('bg_insulin_chart'));
+        chart_bolus.draw(bolustable, options_bolus);        
+
+        var table = new google.visualization.Table(document.getElementById('curve_table'));
         table.draw(datatable, {width: "100%", height: 450, sortColumn: 0, sortAscending: false});
       }
 {% endblock %}
@@ -87,7 +165,11 @@ Pump status history
             <div id="curve_table" class="col-md-12"></div>
           </div>
           <div class="row">
-            <div id="curve_chart" class="col-md-12"></div>
+            <div id="bg_insulin_chart" class="col-md-12"></div>
+          </div>
+          <div class="row">
+            <div id="battery_chart" class="col-md-6"></div>
+            <div id="curve_chart" class="col-md-6"></div>
           </div>
         </div>
 {% endblock %}
