@@ -1,0 +1,95 @@
+{% extends "bgmonitor/master.html" %}
+{% block title %}
+Current status
+{% endblock %}
+{% block css %}
+
+.fixed-panel {
+  min-height: 180px;
+  max-height: 180px;
+  overflow-y: hidden;
+  text-align: center;
+}
+
+{% endblock %}
+
+{% block content %}
+        <div class="container">
+          <div class="row">
+            <div class="panel panel-default col-md-12">
+              <div class="panel-body">
+                {{  status.timestamp |date:'Y-m-d H:i' }}
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="panel panel-default fixed-panel col-md-3">
+              <div class="panel-heading">Sensor BGL:</div>
+              <div class="panel-body">
+                <h1>
+                  {% if status.sensorBGL < 0x200 %}
+                    {{ status.sensorBGL}}
+                  {% else %}
+                    n/a
+                  {% endif %}
+                </h1>
+              </div>
+            </div>
+            <div class="panel panel-default fixed-panel col-md-3">
+              <div class="panel-heading">Trend</div>
+              <div class="panel-body"><h1>{{ status.trendArrow }}</h1></div>
+            </div>
+            <div class="panel panel-default fixed-panel col-md-3">
+              <div class="panel-heading">BGL Timestamp</div>
+              <div class="panel-body"><h1>{{ status.sensorBGLTimestamp |date:'Y-m-d H:i' }}</h1></div>
+            </div>
+            <div class="panel panel-default fixed-panel col-md-3">
+              <div class="panel-heading">Calibration</div>
+              <div class="panel-body">
+                <h2>{{ status.calibrationTimeRemaining |time:'h:i' }}</h2>
+                <h4>{{ status.calibrationdatetime |date:'Y-m-d H:i' }}</h4>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="panel panel-default fixed-panel col-md-3">
+              <div class="panel-heading">Battery</div>
+              <div class="panel-body"><h1>{{ status.batteryLevelPercentage }}%</h1></div>
+            </div>
+            <div class="panel panel-default fixed-panel col-md-3">
+              <div class="panel-heading">Sensor battery</div>
+              <div class="panel-body"><h1>{{ status.sensorBatteryPercent }}%</h1></div>
+            </div>
+            <div class="panel panel-default fixed-panel col-md-3">
+              <div class="panel-heading">Sensor status</div>
+              <div class="panel-body"><h2>{{ status.sensorStatus }}</h2></div>
+            </div>
+            <div class="panel panel-default fixed-panel col-md-3">
+              <div class="panel-heading">Sensor control</div>
+              <div class="panel-body"><h1>{{ status.sensorControl }}</h1></div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="panel panel-default fixed-panel col-md-3">
+              <div class="panel-heading">Insulin</div>              
+              <div class="panel-body">
+                <h2>Active: {{ status.activeInsulin }}</h2>
+                <h4>Remaining: {{ status.insulinUnitsRemaining }}</h4>
+            </div>
+            </div>
+            <div class="panel panel-default fixed-panel col-md-3">
+              <div class="panel-heading">Current basal rate</div>
+              <div class="panel-body"><h1>{{ status.currentBasalRate }}</h1></div>
+            </div>
+            <div class="panel panel-default fixed-panel col-md-3">
+              <div class="panel-heading">Temp basal</div>
+              <div class="panel-body"><h1>{{ status.tempBasalPercentage }}%</h1></div>
+            </div>
+            <div class="panel panel-default fixed-panel col-md-3">
+              <div class="panel-heading">Temp basal remaining</div>
+              <h2>{{ status.tempBasalTimeRemaining |time:'h:i' }}</h2>
+              <h4>{{ status.tempBasalTime |date:'Y-m-d H:i' }}</h4>
+          </div>
+          </div>
+        </div>
+{% endblock %}

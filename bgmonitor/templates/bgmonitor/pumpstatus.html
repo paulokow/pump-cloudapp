@@ -1,0 +1,93 @@
+{% extends "bgmonitor/master.html" %}
+{% block title %}
+Pump status history
+{% endblock %}
+{% block scripts %}
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.load('current', {'packages':['table']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function roundMinutes(date) {
+        return new Date(Math.round(date.getTime() / 1000) * 1000);
+      }
+
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('datetime', 'Date & Time');
+        data.addColumn('number', 'Cal. in (min)');
+        data.addColumn('number', 'BGL');
+        data.addColumn('number', 'Battery');
+        data.addColumn('number', 'Sensor Battery');
+        data.addColumn('number', 'Insulin');
+
+        var datatable = new google.visualization.DataTable();
+        datatable.addColumn('datetime', 'Date & Time');
+        datatable.addColumn('number', 'Cal. in (min)');
+        datatable.addColumn('number', 'BGL');
+        datatable.addColumn('number', 'Battery');
+        datatable.addColumn('number', 'Sensor Battery');
+        datatable.addColumn('number', 'Insulin');
+        datatable.addColumn('string', 'Sensor status');
+        datatable.addColumn('string', 'Sensor control');
+
+        {% for m in statusevents %}
+          data.addRow([
+            roundMinutes(new Date("{{ m.timestamp.isoformat }}")), 
+            {{ m.sensorCalibrationMinutesRemaining }} != 65535 ? {{ m.sensorCalibrationMinutesRemaining }} : null,
+            {{ m.sensorBGL }} < 512 ? {{ m.sensorBGL }} : null,
+            {{ m.batteryLevelPercentage }},
+            {{ m.sensorBatteryPercent }},
+            {{ m.insulinUnitsRemaining }},
+          ]);
+          datatable.addRow([
+            roundMinutes(new Date("{{ m.timestamp.isoformat }}")), 
+            {{ m.sensorCalibrationMinutesRemaining }} != 65535 ? {{ m.sensorCalibrationMinutesRemaining }} : null,
+            {{ m.sensorBGL }} < 512 ? {{ m.sensorBGL }} : null,
+            {{ m.batteryLevelPercentage }},
+            {{ m.sensorBatteryPercent }},
+            {{ m.insulinUnitsRemaining }},
+            "{{ m.sensorStatus }}",
+            "{{ m.sensorControl }}",
+          ]);
+        {% endfor %}
+        var options = {
+          title: 'BG Values',
+          curveType: 'function',
+          height: 450,
+          series: {
+            0: { pointSize: 2, targetAxisIndex: 0 },
+            1: { pointSize: 2, targetAxisIndex: 0 },
+            2: { pointSize: 2, targetAxisIndex: 1 },
+            3: { pointSize: 2, targetAxisIndex: 1 },
+            4: { pointSize: 2, targetAxisIndex: 0 },
+          },
+          legend: { position: 'right' },
+          vAxes: {
+            0: {
+            },
+            1: {
+              gridlines: {color: 'transparent'},
+              ticks: [0, 25, 50, 75, 100]
+            }
+          }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+        var table = new google.visualization.Table(document.getElementById('curve_table'));
+
+        chart.draw(data, options);
+        table.draw(datatable, {width: "100%", height: 450, sortColumn: 0, sortAscending: false});
+      }
+{% endblock %}
+
+{% block content %}
+        <div class="container">
+          {% include "bgmonitor/shared/dateselector.html" %}
+          <div class="row">
+            <div id="curve_table" class="col-md-12"></div>
+          </div>
+          <div class="row">
+            <div id="curve_chart" class="col-md-12"></div>
+          </div>
+        </div>
+{% endblock %}

@@ -8,14 +8,17 @@
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
         <script type="text/javascript" src="{% static 'bgmonitor/NoSleep.min.js' %}"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment-with-locales.min.js"></script>
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
-	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
-	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+		<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+		<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 		<script type="text/javascript">
 		<!--
 		{% block scripts %}{% endblock %}
 		-->
 		</script>
+		<style>
+		{% block css %}{% endblock %}
+		</style>
 		<title>{% block title %}Change me: title{% endblock %}</title>
 	</head>
 	<body>
@@ -25,9 +28,11 @@
 					<a class="navbar-brand" href="#">Diabmon</a>
 				</div>
 				<ul class="nav navbar-nav">
+					<li {% if request.resolver_match.url_name == 'currentstatus' %}class="active"{% endif %}><a href="{% url 'currentstatus' %}">Current data</a></li>
 					<li {% if request.resolver_match.url_name == 'main' %}class="active"{% endif %}><a href="{% url 'main' %}">Hourly</a></li>
 					<li {% if request.resolver_match.url_name == 'main_details' %}class="active"{% endif %}><a href="{% url 'main_details' %}">Details</a></li>
 					<li {% if request.resolver_match.url_name == 'stats' %}class="active"{% endif %}><a href="{% url 'stats' %}">14d Stats</a></li>
+					<li {% if request.resolver_match.url_name == 'pumpstatus' %}class="active"{% endif %}><a href="{% url 'pumpstatus' %}">Pump status</a></li>
 				</ul>
 			</div>
 		</nav>

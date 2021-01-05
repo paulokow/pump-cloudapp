@@ -112,3 +112,44 @@ def stats(request):
       })
       
   return render_to_response('bgmonitor/stats.html', ctx, context_instance=RequestContext(request))
+
+def pumpstatus(request):
+  try:
+    dt_end = datetime.strptime(request.GET.get('end', ''), "%Y-%m-%d") + timedelta(days=1);  
+  except ValueError:
+    dt_end =  datetime.now()
+
+  try:
+    dt_start = datetime.strptime(request.GET.get('start', ''), "%Y-%m-%d");  
+  except ValueError:
+    dt_start =  dt_end - timedelta(days=1)
+
+  statusevents = PumpStatus.objects.filter(timestamp__gt = dt_start + _timezonediff()).filter(timestamp__lte = dt_end + _timezonediff()).order_by('-timestamp')
+  ctx = Context(
+      {
+          'dt_start': dt_start,
+          'dt_end': dt_end,
+          'dt_end_param': dt_end - timedelta(days=1),
+          'mintime': dt_start,
+          'maxtime': dt_end,
+          'statusevents': statusevents,
+      })
+  return render_to_response('bgmonitor/pumpstatus.html', ctx, context_instance=RequestContext(request))
+
+def currentstatus(request):
+  status = PumpStatus.objects.latest('timestamp')
+  status.sensorCalibrationMinutesRemaining = 443
+  status.calibrationdatetime = status.timestamp + timedelta(minutes=status.sensorCalibrationMinutesRemaining) if status.sensorCalibrationMinutesRemaining & 0x0200 == 0 else None
+  status.calibrationTimeRemaining = datetime.fromtimestamp(0) + (status.calibrationdatetime - datetime.now()) \
+    if status.calibrationdatetime is not None and status.calibrationdatetime > datetime.now() \
+    else None
+  status.tempBasalTime = status.timestamp + timedelta(minutes=status.tempBasalMinutesRemaining) if status.tempBasalMinutesRemaining > 0 else None
+  status.tempBasalTimeRemaining = datetime.fromtimestamp(0) + (status.tempBasalTime - datetime.now()) \
+    if status.tempBasalTime is not None and status.tempBasalTime > datetime.now() \
+    else None
+  status.sensorBGLTimestamp =  status.sensorBGLTimestamp.replace(tzinfo=tz.tzutc()).astimezone(tz.tzlocal())
+  ctx = Context(
+      {
+          'status': status
+      })
+  return render_to_response('bgmonitor/currentstatus.html', ctx)
