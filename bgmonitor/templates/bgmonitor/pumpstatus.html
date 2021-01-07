@@ -12,6 +12,8 @@ Pump status history
       }
 
       function drawChart() {
+        const None = null;
+
         var data = new google.visualization.DataTable();
         data.addColumn('datetime', 'Date & Time');
         data.addColumn('number', 'Cal. in (min)');
@@ -25,7 +27,7 @@ Pump status history
         datatable.addColumn('number', 'Sensor Battery');
         datatable.addColumn('number', 'Insulin');
         datatable.addColumn('string', 'Sensor status');
-        datatable.addColumn('string', 'Sensor control');
+        datatable.addColumn('string', 'Sensor status value');
 
         var battable = new google.visualization.DataTable();
         battable.addColumn('datetime', 'Date & Time');
@@ -65,7 +67,7 @@ Pump status history
             {{ m.sensorBatteryPercent }},
             {{ m.insulinUnitsRemaining }},
             "{{ m.sensorStatus }}",
-            "{{ m.sensorControl }}",
+            "0x{{ m.sensorStatusValue |stringformat:"02X"}} {{ m.sensorStatusValue |stringformat:"08b"}}",
           ]);
         {% endfor %}
 
