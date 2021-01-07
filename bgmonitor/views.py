@@ -138,18 +138,28 @@ def pumpstatus(request):
 
 def currentstatus(request):
   status = PumpStatus.objects.latest('timestamp')
-  status.calibrationdatetime = status.timestamp + timedelta(minutes=status.sensorCalibrationMinutesRemaining) if status.sensorCalibrationMinutesRemaining != 0xFFFF else None
-  cal_time_remaining = status.calibrationdatetime - datetime.now() if status.calibrationdatetime is not None else None;
+  status.calibrationdatetime = status.timestamp + timedelta(minutes=status.sensorCalibrationMinutesRemaining) \
+    if status.sensorCalibrationMinutesRemaining is not None and status.sensorCalibrationMinutesRemaining != 0xFFFF \
+      else None
+  cal_time_remaining = status.calibrationdatetime - datetime.now() \
+    if status.calibrationdatetime is not None \
+      else None
   status.calibrationTimeRemaining = { "hours": int(cal_time_remaining.seconds / (60 * 60)), "minutes": int(cal_time_remaining.seconds / 60) % 60 } \
-    if status.calibrationdatetime is not None and status.calibrationdatetime > datetime.now() \
+    if cal_time_remaining is not None and status.calibrationdatetime is not None and status.calibrationdatetime > datetime.now() \
     else None
-  status.tempBasalTime = status.timestamp + timedelta(minutes=status.tempBasalMinutesRemaining) if status.tempBasalMinutesRemaining > 0 else None
-  basal_time_remaining = status.tempBasalTime - datetime.now() if status.tempBasalTime is not None else None
+  status.tempBasalTime = status.timestamp + timedelta(minutes=status.tempBasalMinutesRemaining) \
+    if status.tempBasalMinutesRemaining is not None and status.tempBasalMinutesRemaining > 0 \
+      else None
+  basal_time_remaining = status.tempBasalTime - datetime.now() \
+    if status.tempBasalTime is not None \
+      else None
   status.tempBasalTimeRemaining = { "hours": int(basal_time_remaining.seconds / (60 * 60)), "minutes": int(basal_time_remaining.seconds / 60) % 60 } \
     if status.tempBasalTime is not None and status.tempBasalTime > datetime.now() \
     else None
   status.sensorBGLTimestamp =  status.sensorBGLTimestamp.replace(tzinfo=tz.tzutc()).astimezone(tz.tzlocal())
-  status.tempBasalPercentage = status.tempBasalPercentage if status.tempBasalTime is not None and status.tempBasalTime > datetime.now() else None
+  status.tempBasalPercentage = status.tempBasalPercentage \
+    if status.tempBasalTime is not None and status.tempBasalTime > datetime.now() \
+      else None
   ctx = Context(
       {
           'status': status
