@@ -76,7 +76,7 @@ Current status
               <div class="panel-heading">Pump Status</div>
               <div class="panel-body">
                 <h5>CGM: {{ status.StatusCgm |yesno:"OK,Not OK,No value" }}</h5>
-                <h5>Temp basal: {{ status.StatusTempBasal |yesno:"Yen,No,No value" }}</h5>
+                <h5>Temp basal: {{ status.StatusTempBasal |yesno:"Yes,No,No value" }}</h5>
                 <h5>Suspended: {{ status.StatusSuspended |yesno:"Yes,No,No value" }}</h5>
               </div>
             </div>
