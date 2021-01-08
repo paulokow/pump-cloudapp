@@ -163,6 +163,9 @@ def currentstatus(request):
         and status.sensorBGL is not None \
         and status.sensorRateOfChangePerMin is not None \
       else None
+
+  status.lastBolusTimestamp =  status.lastBolusTimestamp.replace(tzinfo=tz.tzutc()).astimezone(tz.tzlocal()) \
+    if status.lastBolusTimestamp is not None else None
   status.tempBasalPercentage = status.tempBasalPercentage \
     if status.tempBasalTime is not None and status.tempBasalTime > datetime.now() \
       else None 

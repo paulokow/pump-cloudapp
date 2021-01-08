@@ -53,8 +53,8 @@ Current status
             <div class="panel panel-default fixed-panel col-md-3 col-sm-4">
               <div class="panel-heading">Calibration</div>
               <div class="panel-body">
-                <h2>{{ status.calibrationTimeRemaining.hours }}:{{ status.calibrationTimeRemaining.minutes |stringformat:"02d" }}</h2>
-                <h4>{{ status.calibrationdatetime |date:'Y-m-d H:i' }}</h4>
+                <h2>{{ status.calibrationdatetime |date:'H:i' }}</h2>
+                <h4>In {{ status.calibrationTimeRemaining.hours }}:{{ status.calibrationTimeRemaining.minutes |stringformat:"02d" }}</h4>
               </div>
             </div>
             <div class="panel panel-default fixed-panel col-md-3 col-sm-4">
@@ -68,20 +68,20 @@ Current status
             <div class="panel panel-default fixed-panel col-md-3 col-sm-4">
               <div class="panel-heading">Sensor status</div>
               <div class="panel-body">
-                <h2>{{ status.sensorStatus }}</h2>
+                <h3>{{ status.sensorStatus }}</h3>
                 <h4>{{ status.sensorStatusValueBin }}</h4>
               </div>
             </div>
             <div class="panel panel-default fixed-panel col-md-3 col-sm-4">
               <div class="panel-heading">Pump Status</div>
               <div class="panel-body">
-                <h5>CGM: {{ status.StatusCgm |yesno:"OK,Not OK,No value" }}</h5>
-                <h5>Temp basal: {{ status.StatusTempBasal |yesno:"Yes,No,No value" }}</h5>
-                <h5>Suspended: {{ status.StatusSuspended |yesno:"Yes,No,No value" }}</h5>
+                <h4>CGM: {{ status.StatusCgm |yesno:"OK,Not OK,No value" }}</h4>
+                <h4>Temp basal: {{ status.StatusTempBasal |yesno:"Yes,No,No value" }}</h4>
+                <h4>Suspended: {{ status.StatusSuspended |yesno:"Yes,No,No value" }}</h4>
               </div>
             </div>
             <div class="panel panel-default fixed-panel col-md-3 col-sm-4">
-              <div class="panel-heading">Insulin</div>              
+              <div class="panel-heading">Insulin</div>
               <div class="panel-body">
                 <h2>Active: {{ status.activeInsulin }}</h2>
                 <h4>Remaining: {{ status.insulinUnitsRemaining }}</h4>
