@@ -27,14 +27,14 @@ Current status
               <div class="panel-heading">Sensor BGL:</div>
               <div class="panel-body">
                 <h5>{{ status.sensorBGLTimestamp |date:'Y-m-d H:i' }}</h5>
-                <h1>
+                <h2>
                   {% if status.sensorBGL < 512 %}
                     {{ status.sensorBGL}}
                   {% else %}
                     n/a
                   {% endif %}
-                </h1>
-                <h3>{{ status.trendArrow }}&nbsp;({{ status.sensorRateOfChangePerMin }})</h3>
+                </h2>
+                <h4>{{ status.trendArrow }}&nbsp;({{ status.sensorRateOfChangePerMin }})</h4>
               </div>
             </div>
             <div class="panel panel-default fixed-panel col-md-3 col-sm-4">
@@ -47,7 +47,7 @@ Current status
               <div class="panel-heading">Last bolus</div>
               <div class="panel-body">
                 <h1>{{ status.lastBolusAmount }}</h1>
-                <h3>{{ status.lastBolusTimestamp }}</h3>
+                <h3>{{ status.lastBolusTimestamp |date:'Y-m-d H:i' }}</h3>
               </div>
             </div>
             <div class="panel panel-default fixed-panel col-md-3 col-sm-4">
