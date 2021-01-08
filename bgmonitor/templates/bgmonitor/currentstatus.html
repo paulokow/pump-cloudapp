@@ -18,7 +18,7 @@ Current status
           <div class="row">
             <div class="panel panel-default col-md-12">
               <div class="panel-body">
-                {{  status.timestamp |date:'Y-m-d H:i' }}
+                {{  status.timestamp |date:'Y-m-d G:i' }}
               </div>
             </div>
           </div>
@@ -26,7 +26,7 @@ Current status
             <div class="panel panel-default fixed-panel col-md-3 col-sm-4">
               <div class="panel-heading">Sensor BGL:</div>
               <div class="panel-body">
-                <h5>{{ status.sensorBGLTimestamp |date:'H:i' }}</h5>
+                <h5>{{ status.sensorBGLTimestamp |date:'G:i' }}</h5>
                 <h2>
                   {% if status.sensorBGL < 512 %}
                     {{ status.sensorBGL}}
@@ -47,13 +47,13 @@ Current status
               <div class="panel-heading">Last bolus</div>
               <div class="panel-body">
                 <h1>{{ status.lastBolusAmount }}</h1>
-                <h3>{{ status.lastBolusTimestamp |date:'H:i' }}</h3>
+                <h3>{{ status.lastBolusTimestamp |date:'G:i' }}</h3>
               </div>
             </div>
             <div class="panel panel-default fixed-panel col-md-3 col-sm-4">
               <div class="panel-heading">Calibration</div>
               <div class="panel-body">
-                <h2>{{ status.calibrationdatetime |date:'H:i' }}</h2>
+                <h2>{{ status.calibrationdatetime |date:'G:i' }}</h2>
                 <h4>In {{ status.calibrationTimeRemaining.hours }}:{{ status.calibrationTimeRemaining.minutes |stringformat:"02d" }}</h4>
               </div>
             </div>
@@ -98,7 +98,7 @@ Current status
             <div class="panel panel-default fixed-panel col-md-3 col-sm-4">
               <div class="panel-heading">Temp basal remaining</div>
               <h2>{{ status.tempBasalTimeRemaining.hours }}:{{ status.tempBasalTimeRemaining.minutes |stringformat:"02d" }}</h2>
-              <h4>{{ status.tempBasalTime |date:'Y-m-d H:i' }}</h4>
+              <h4>{{ status.tempBasalTime |date:'Y-m-d G:i' }}</h4>
           </div>
         </div>
 {% endblock %}
