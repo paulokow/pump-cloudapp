@@ -160,6 +160,7 @@ def currentstatus(request):
   status.tempBasalPercentage = status.tempBasalPercentage \
     if status.tempBasalTime is not None and status.tempBasalTime > datetime.now() \
       else None
+  status.sensorStatusValueBin = "{:08b}".format(status.sensorStatusValue)
   ctx = Context(
       {
           'status': status
