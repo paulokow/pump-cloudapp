@@ -26,6 +26,7 @@ Current status
             <div class="panel panel-default fixed-panel col-md-3 col-sm-4">
               <div class="panel-heading">Sensor BGL:</div>
               <div class="panel-body">
+                <h5>{{ status.sensorBGLTimestamp |date:'Y-m-d H:i' }}</h5>
                 <h1>
                   {% if status.sensorBGL < 512 %}
                     {{ status.sensorBGL}}
@@ -33,15 +34,18 @@ Current status
                     n/a
                   {% endif %}
                 </h1>
+                <h3>{{ status.trendArrow }}&nbsp;({{ status.sensorRateOfChangePerMin }})</h3>
               </div>
             </div>
             <div class="panel panel-default fixed-panel col-md-3 col-sm-4">
-              <div class="panel-heading">Trend</div>
-              <div class="panel-body"><h1>{{ status.trendArrow }}</h1></div>
+              <div class="panel-heading">Last blood GV</div>
+              <div class="panel-body">
+                <h1>{{ status.bolusWizardBGL }}</h1>
+              </div>
             </div>
             <div class="panel panel-default fixed-panel col-md-3 col-sm-4">
-              <div class="panel-heading">BGL Timestamp</div>
-              <div class="panel-body"><h1>{{ status.sensorBGLTimestamp |date:'Y-m-d H:i' }}</h1></div>
+              <div class="panel-heading">TBD</div>
+              <div class="panel-body"><h1></h1></div>
             </div>
             <div class="panel panel-default fixed-panel col-md-3 col-sm-4">
               <div class="panel-heading">Calibration</div>
