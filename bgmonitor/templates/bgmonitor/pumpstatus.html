@@ -66,7 +66,7 @@ Pump status history
             roundMinutes(new Date("{{ m.timestamp.isoformat }}")), 
             {{ m.sensorCalibrationMinutesRemaining }} != 65535 ? {{ m.sensorCalibrationMinutesRemaining }} : null,
             {{ m.sensorBGL }} < 512 ? {{ m.sensorBGL }} : null,
-            "{{ m trendArrow }}",
+            "{{ m.trendArrow }}",
             {{ m.batteryLevelPercentage }},
             {{ m.sensorBatteryPercent }},
             {{ m.insulinUnitsRemaining }},
