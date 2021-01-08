@@ -21,9 +21,9 @@ Pump status history
 
         var datatable = new google.visualization.DataTable();
         datatable.addColumn('datetime', 'Date & Time');
-        datatable.addColumn('number', 'Cal. in (min)');
         datatable.addColumn('number', 'BGL');
         datatable.addColumn('string', 'BGL Trend');
+        datatable.addColumn('number', 'Cal. in (min)');
         datatable.addColumn('number', 'Battery');
         datatable.addColumn('number', 'Sensor Battery');
         datatable.addColumn('number', 'Insulin');
@@ -64,9 +64,9 @@ Pump status history
           ]);
           datatable.addRow([
             roundMinutes(new Date("{{ m.timestamp.isoformat }}")), 
-            {{ m.sensorCalibrationMinutesRemaining }} != 65535 ? {{ m.sensorCalibrationMinutesRemaining }} : null,
             {{ m.sensorBGL }} < 512 ? {{ m.sensorBGL }} : null,
             "{{ m.trendArrow }}",
+            {{ m.sensorCalibrationMinutesRemaining }} != 65535 ? {{ m.sensorCalibrationMinutesRemaining }} : null,
             {{ m.batteryLevelPercentage }},
             {{ m.sensorBatteryPercent }},
             {{ m.insulinUnitsRemaining }},
