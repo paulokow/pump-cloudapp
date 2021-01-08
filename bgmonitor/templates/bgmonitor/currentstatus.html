@@ -29,12 +29,12 @@ Current status
                 <h5>{{ status.sensorBGLTimestamp |date:'H:i' }}</h5>
                 <h2>
                   {% if status.sensorBGL < 512 %}
-                    {{ status.sensorBGL}} ({{ status.sensorBGLin30Min }})
+                    {{ status.sensorBGL}}
                   {% else %}
                     n/a
                   {% endif %}
                 </h2>
-                <h4>{{ status.trendArrow }}&nbsp;({{ status.sensorRateOfChangePer30Min }})</h4>
+                <h4>{{ status.trendArrow }}&nbsp;({{ status.sensorBGLin30Min }})</h4>
               </div>
             </div>
             <div class="panel panel-default fixed-panel col-md-3 col-sm-4">
