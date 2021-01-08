@@ -66,9 +66,11 @@ Current status
               </div>
             </div>
             <div class="panel panel-default fixed-panel col-md-3 col-sm-4">
-              <div class="panel-heading">TBD</div>
+              <div class="panel-heading">Pump Status</div>
               <div class="panel-body">
-                
+                <h5>CGM: {{ status.StatusCgm |yesno:"OK,Not OK,No value" }}</h5>
+                <h5>Temp basal: {{ status.StatusTempBasal |yesno:"Yen,No,No value" }}</h5>
+                <h5>Suspended: {{ status.StatusSuspended |yesno:"Yes,No,No value" }}</h5>
               </div>
             </div>
             <div class="panel panel-default fixed-panel col-md-3 col-sm-4">
