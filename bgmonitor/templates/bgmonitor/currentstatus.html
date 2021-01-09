@@ -26,6 +26,7 @@ Current status
             <div class="panel panel-default fixed-panel col-md-3 col-sm-4">
               <div class="panel-heading">Sensor BGL:</div>
               <div class="panel-body">
+                {% if status.StatusCgm %}
                 <h5>{{ status.sensorBGLTimestamp |date:'G:i' }}</h5>
                 <h2>
                   {% if status.sensorBGL < 512 %}
@@ -35,6 +36,9 @@ Current status
                   {% endif %}
                 </h2>
                 <h4>{{ status.trendArrow }}&nbsp;(in 15 min. {{ status.sensorBGLin15Min }})</h4>
+                {% else %}
+                <h1>No sensor data</h1>
+                {% endif %}
               </div>
             </div>
             <div class="panel panel-default fixed-panel col-md-3 col-sm-4">
@@ -53,9 +57,13 @@ Current status
             <div class="panel panel-default fixed-panel col-md-3 col-sm-4">
               <div class="panel-heading">Calibration</div>
               <div class="panel-body">
-                <h2>{{ status.calibrationdatetime |date:'G:i' }}</h2>
-                <h4>In {{ status.calibrationTimeRemaining.hours }}:{{ status.calibrationTimeRemaining.minutes |stringformat:"02d" }}</h4>
-              </div>
+                {% if status.StatusCgm %}
+                  <h2>{{ status.calibrationdatetime |date:'G:i' }}</h2>
+                  <h4>In {{ status.calibrationTimeRemaining.hours }}:{{ status.calibrationTimeRemaining.minutes |stringformat:"02d" }}</h4>
+                {% else %}
+                  <h1>No sensor data</h1>
+                {% endif %}
+                </div>
             </div>
             <div class="panel panel-default fixed-panel col-md-3 col-sm-4">
               <div class="panel-heading">Battery</div>
@@ -63,7 +71,13 @@ Current status
             </div>
             <div class="panel panel-default fixed-panel col-md-3 col-sm-4">
               <div class="panel-heading">Sensor battery</div>
-              <div class="panel-body"><h1>{{ status.sensorBatteryPercent }}%</h1></div>
+              <div class="panel-body">
+                {% if status.StatusCgm %}
+                  <h1>{{ status.sensorBatteryPercent }}%</h1>
+                {% else %}
+                  <h1>No sensor data</h1>
+                {% endif %}
+              </div>
             </div>
             <div class="panel panel-default fixed-panel col-md-3 col-sm-4">
               <div class="panel-heading">Sensor status</div>
