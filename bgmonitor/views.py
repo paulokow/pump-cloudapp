@@ -158,7 +158,7 @@ def currentstatus(request):
     else None
   status.sensorBGLTimestamp =  status.sensorBGLTimestamp.replace(tzinfo=tz.tzutc()).astimezone(tz.tzlocal())
   status.sensorBGL = status.sensorBGL \
-    if  status.sensorBGL is not None and status.sensorBGL & 0x20 == 0 \
+    if  status.sensorBGL is not None and status.sensorBGL & 0x200 == 0 \
       else None
   status.sensorBGLin15Min = status.sensorBGL + int(15 * status.sensorRateOfChangePerMin) \
     if status.StatusCgm is not None \
